@@ -1,0 +1,22 @@
+PODS:
+  - do_not_disturb (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+
+DEPENDENCIES:
+  - do_not_disturb (from `.symlinks/plugins/do_not_disturb/ios`)
+  - Flutter (from `Flutter`)
+
+EXTERNAL SOURCES:
+  do_not_disturb:
+    :path: ".symlinks/plugins/do_not_disturb/ios"
+  Flutter:
+    :path: Flutter
+
+SPEC CHECKSUMS:
+  do_not_disturb: f80b070569c1458cfb9246f0d6a43b49c079f1d0
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+
+PODFILE CHECKSUM: 70d9d25280d0dd177a5f637cdb0f0b0b12c6a189
+
+COCOAPODS: 1.12.0
