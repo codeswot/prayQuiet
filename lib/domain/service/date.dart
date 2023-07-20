@@ -1,6 +1,5 @@
 import 'package:hijri/hijri_calendar.dart';
 import 'package:intl/intl.dart';
-import 'package:pray_quiet/data/prayer_info_model.dart';
 
 class DateService {
   DateTime now = DateTime.now();
@@ -22,7 +21,7 @@ class DateService {
     return formattedDate;
   }
 
-  static fmt12Hr(String time) {
+  static String fmt12Hr(String time) {
     final now = DateTime.now();
     final day = getFormartedDay(now);
     final month = getFormartedMonth(now);
@@ -62,8 +61,24 @@ class DateService {
   }
 
   static getFormartedDate(DateTime date) {
-    final DateFormat formatter = DateFormat('yyyy-MM-dd');
+    final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm');
     return formatter.format(date);
+  }
+
+  static DateTime getFormartedDateWitCustomTime(
+      {required DateTime date, required String customTime}) {
+    try {
+      final day = getFormartedDay(date);
+      final month = getFormartedMonth(date);
+      final year = getFormartedYear(date);
+
+      final DateTime parsedTime =
+          DateTime.parse("$year-$month-$day $customTime");
+
+      return parsedTime;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   static getFormartedTime(DateTime date) {
@@ -97,112 +112,14 @@ class DateService {
     return parsedTime.isAfter(now);
   }
 
-  static countdownTo(DateTime date) {
-    final DateTime parsedTime = DateTime.parse(date.toString());
-
-    return parsedTime.difference(date).inHours;
-  }
-
-  /// not my code 😅
-  static CalculatedPrayerInfo calculateNextPrayerTime(
-      Map<String, dynamic> prayerTimes) {
+  static String getcountDownOrNow(DateTime dateTime) {
     final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final tomorrow = today.add(const Duration(days: 1));
+    final countdownDuration = dateTime.difference(now);
 
-    final sortedPrayerTimes = prayerTimes.map((prayer, time) {
-      final prayerTime = DateFormat('HH:mm').parse(time);
-      return MapEntry(
-        prayer,
-        DateTime(
-          now.year,
-          now.month,
-          now.day,
-          prayerTime.hour,
-          prayerTime.minute,
-        ),
-      );
-    });
-
-    final prayerOrder = [
-      'Fajr',
-      'Dhuhr',
-      'Asr',
-      'Maghrib',
-      'Isha\'a',
-    ];
-
-    final nextPrayerTime = prayerOrder
-        .map((prayer) => sortedPrayerTimes[prayer])
-        .firstWhere((prayerTime) => prayerTime!.isAfter(now),
-            orElse: () => null);
-
-    if (nextPrayerTime == null ||
-        nextPrayerTime.isAfter(sortedPrayerTimes['Isha\'a']!)) {
-      final nextPrayerDateTime = DateTime(
-        tomorrow.year,
-        tomorrow.month,
-        tomorrow.day,
-        sortedPrayerTimes['Fajr']!.hour,
-        sortedPrayerTimes['Fajr']!.minute,
-      );
-      return CalculatedPrayerInfo(nextPrayerDateTime, 'Fajr');
-    }
-
-    final nextPrayerName = sortedPrayerTimes.entries
-        .firstWhere(
-          (entry) => entry.value == nextPrayerTime,
-        )
-        .key;
-
-    return CalculatedPrayerInfo(nextPrayerTime, nextPrayerName);
-  }
-
-  static calculateCurrentPrayer() {}
-  static Stream<CalculatedPrayerInfo> getNextPrayerStream(
-      Map<String, dynamic> prayerTimes) async* {
-    while (true) {
-      final nextPrayerInfo = calculateNextPrayerTime(prayerTimes);
-      final now = DateTime.now();
-
-      yield nextPrayerInfo;
-
-      await Future.delayed(const Duration(seconds: 1) -
-          Duration(seconds: now.second) -
-          Duration(milliseconds: now.millisecond));
-    }
-  }
-
-  static String? getCurrentOrNextPrayer(Map<String, dynamic> prayers) {
-    final now = DateTime.now();
-    final currentTime = DateFormat('HH:mm').format(now);
-
-    for (final prayer in prayers.entries) {
-      final prayerTime = DateFormat('HH:mm').parse(prayer.value);
-      final formattedPrayerTime = DateFormat('HH:mm').format(DateTime(
-        now.year,
-        now.month,
-        now.day,
-        prayerTime.hour,
-        prayerTime.minute,
-      ));
-
-      if (currentTime == formattedPrayerTime) {
-        return prayer.key; // Current prayer
-      } else if (currentTime.compareTo(formattedPrayerTime) < 0) {
-        return prayer.key; // Next prayer
-      }
-    }
-
-    return null; // No current or next prayer
-  }
-
-  static Stream<String?> getCurrentOrNextPrayerStream(
-      Map<String, dynamic> prayers) async* {
-    while (true) {
-      final currentOrNextPrayer = getCurrentOrNextPrayer(prayers);
-      yield currentOrNextPrayer;
-      await Future.delayed(const Duration(minutes: 10));
+    if (countdownDuration.isNegative) {
+      return "Now";
+    } else {
+      return "- ${formatDuration(countdownDuration)}";
     }
   }
 

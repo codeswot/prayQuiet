@@ -38,7 +38,7 @@ class DailyPrayerTile extends StatelessWidget {
           Text(title, style: AppTypography.m3BodylLarge()),
           const Spacer(),
           Text(
-            DateService.fmt12Hr(time ?? '') ?? '--:--',
+            DateService.fmt12Hr(time ?? ''),
             style: AppTypography.m3BodylLarge(),
           ),
         ],

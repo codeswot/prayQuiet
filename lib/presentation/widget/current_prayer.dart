@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pray_quiet/data/prayer_info_model.dart';
 import 'package:pray_quiet/domain/provider/prayer.dart';
 import 'package:pray_quiet/domain/service/date.dart';
+import 'package:pray_quiet/domain/service/prayer.dart';
 import 'package:pray_quiet/presentation/style/style.dart';
 
 class CurrentPrayer extends StatelessWidget {
@@ -17,19 +18,16 @@ class CurrentPrayer extends StatelessWidget {
       final prayerInfo = ref.watch(prayerProvider.notifier).prayerDataInfo;
 
       final prayers = ref.watch(prayerProvider);
-      //remove Sunrise from prayer
-      prayers!.toJson().remove('Sunrise');
 
-      return StreamBuilder<CalculatedPrayerInfo>(
-          stream: DateService.getNextPrayerStream(prayers.toJson()),
+      return StreamBuilder<CalculatedPrayerInfo?>(
+          stream:
+              PrayerTimeService.getCurrentOrNextPrayerStream(prayers!.toJson()),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const SizedBox();
             }
             final nextPrayer = snapshot.data!;
 
-            final now = DateTime.now();
-            final countdownDuration = nextPrayer.dateTime.difference(now);
             return Animate(
               effects: const [
                 FadeEffect(
@@ -49,7 +47,8 @@ class CurrentPrayer extends StatelessWidget {
                   ),
                   Text(
                     DateService.fmt12Hr(
-                        DateService.getFormartedTime(nextPrayer.dateTime)),
+                      DateService.getFormartedTime(nextPrayer.dateTime),
+                    ),
                     style: AppTypography.m3TitlelMedium(),
                   ),
                   const SizedBox(height: 16),
@@ -57,7 +56,7 @@ class CurrentPrayer extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '- ${DateService.formatDuration(countdownDuration)}',
+                        DateService.getcountDownOrNow(nextPrayer.dateTime),
                         style: AppTypography.m3BodylLarge(),
                       ),
                       SizedBox(

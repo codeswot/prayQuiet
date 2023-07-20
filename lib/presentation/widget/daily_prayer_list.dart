@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pray_quiet/data/prayer_info_model.dart';
 import 'package:pray_quiet/domain/provider/prayer.dart';
-import 'package:pray_quiet/domain/service/date.dart';
+import 'package:pray_quiet/domain/service/service.dart';
 import 'package:shimmer/shimmer.dart';
 
 import 'daily_prayer_tile.dart';
@@ -28,12 +29,27 @@ class DailyPrayerList extends StatelessWidget {
         );
       }
       final prayers = ref.watch(prayerProvider);
-      prayers!.toJson().remove('Sunrise');
 
-      return StreamBuilder<String?>(
-          stream: DateService.getCurrentOrNextPrayerStream(prayers.toJson()),
+      return StreamBuilder<CalculatedPrayerInfo?>(
+          stream:
+              PrayerTimeService.getCurrentOrNextPrayerStream(prayers!.toJson()),
           builder: (context, snapshot) {
-            final currentPrayer = snapshot.data ?? 'Fajr';
+            if (!snapshot.hasData) {
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Shimmer.fromColors(
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  child: Container(
+                    height: 100,
+                    width: double.infinity,
+                    color: Colors.white,
+                  ),
+                ),
+              );
+            }
+
+            final currentPrayer = snapshot.data!.prayerName;
 
             return Column(
               children: [

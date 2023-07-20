@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pray_quiet/domain/provider/setup.dart';
+import 'package:pray_quiet/domain/provider/prayer.dart';
 import 'package:pray_quiet/presentation/style/style.dart';
 import 'package:pray_quiet/presentation/widget/widget.dart';
 import 'package:shimmer/shimmer.dart';
@@ -20,9 +20,8 @@ class Home extends StatelessWidget {
             // ),
             actions: [
               IconButton(
-                onPressed: () async {
-                  ref.watch(setupProvider.notifier).removeSetup();
-                },
+                onPressed: () =>
+                    ref.watch(prayerProvider.notifier).updatePrayer(),
                 icon: Shimmer.fromColors(
                   baseColor: AppColors.text,
                   highlightColor: AppColors.secondary,
@@ -38,7 +37,7 @@ class Home extends StatelessWidget {
             pinned: true,
             snap: true,
             stretch: true,
-            expandedHeight: MediaQuery.of(context).size.height * 0.3,
+            expandedHeight: 250,
             flexibleSpace: FlexibleSpaceBar(
               background: Stack(
                 children: [

@@ -38,7 +38,12 @@ class Setup extends _$Setup {
           ref.watch(getSharedPreferencesProvider);
       logger.info("Attempting complete setup ...");
       state = SetupState.inProgress;
-      await DoNotDisturb().openDoNotDisturbSettings();
+      final DoNotDisturb doNotDisturb = DoNotDisturb();
+      bool isPermissionGranted = await doNotDisturb.isPermissionGranted;
+      if (!isPermissionGranted) {
+        await doNotDisturb.openDoNotDisturbSettings();
+      }
+
       final city = await LocationService.determinePosition();
       final PrayerApiModel data = await ApiDataFetch.getPrayerTime(city);
 
@@ -64,11 +69,13 @@ class Setup extends _$Setup {
 
     AsyncValue<SharedPreferences> pref =
         ref.watch(getSharedPreferencesProvider);
-    pref.whenData((repo) => {
-          repo.setBool("is-setup-complete", false),
-          logger.info("is-setup-complete to false"),
-          state = SetupState.notStarted
-        });
+    pref.whenData(
+      (repo) => {
+        repo.setBool("is-setup-complete", false),
+        logger.info("is-setup-complete to false"),
+        state = SetupState.notStarted
+      },
+    );
   }
 }
 

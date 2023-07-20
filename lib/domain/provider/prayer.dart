@@ -1,6 +1,6 @@
+import 'package:pray_quiet/data/api_data_fetch.dart';
 import 'package:pray_quiet/data/prayer_api_model.dart';
 import 'package:pray_quiet/domain/provider/shared_pref.dart';
-import 'package:pray_quiet/domain/service/date.dart';
 
 import 'package:pray_quiet/domain/service/service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -44,13 +44,45 @@ class Prayer extends _$Prayer {
 
   Future<void> updatePrayer() async {
     try {
+      isLoading = true;
+
       LoggingService logger = LoggingService();
 
-      // AsyncValue<SharedPreferences> pref =
-      //     ref.watch(getSharedPreferencesProvider);
-      logger.info("Attempting to update prayer ...");
+      final city = await LocationService.determinePosition();
+      final PrayerApiModel data = await ApiDataFetch.getPrayerTime(city);
+
+      AsyncValue<SharedPreferences> pref =
+          ref.watch(getSharedPreferencesProvider);
+      logger.info("Attempting to update prayer time ...");
+
+      pref.whenData(
+        (repo) {
+          repo.setString(
+            "pray_time",
+            data.toRawJson(),
+          );
+          logger.info("Prayer time updated");
+
+          final val = repo.getString("pray_time");
+
+          if (val != null) {
+            prayerDataInfo = PrayerApiModel.fromRawJson(val);
+
+            final date = DateService().getApisToday();
+
+            final res = prayerDataInfo?.praytimes[date];
+
+            prayers = Prayers.fromJson(res);
+
+            logger.info("updated prayers fetched is $res");
+
+            isLoading = false;
+            state = prayers;
+          }
+        },
+      );
     } catch (e) {
-      state = null;
+      isLoading = false;
       rethrow;
     }
   }
