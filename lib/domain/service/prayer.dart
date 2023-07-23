@@ -42,7 +42,8 @@ class PrayerTimeService {
         return prayerDataInfo.praytimes;
       }
     } catch (e) {
-      rethrow;
+      logger.error('An Error occured getPrayerTime $e');
+      
     }
     return null;
   }

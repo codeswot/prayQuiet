@@ -1,8 +1,10 @@
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:pray_quiet/data/api_data_fetch.dart';
 import 'package:pray_quiet/data/prayer_api_model.dart';
 import 'package:pray_quiet/domain/provider/shared_pref.dart';
 
 import 'package:pray_quiet/domain/service/service.dart';
+import 'package:pray_quiet/vm_background.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 part 'prayer.g.dart';
@@ -33,6 +35,17 @@ class Prayer extends _$Prayer {
         prayers = Prayers.fromJson(res);
 
         logger.info("prayers fetched is $res");
+
+        final now = DateTime.now();
+        AndroidAlarmManager.periodic(
+          const Duration(seconds: 1), //seconds 1 for debug sake
+          now.microsecondsSinceEpoch.hashCode,
+          vmBackgroundService,
+          startAt: now,
+          wakeup: true,
+          allowWhileIdle: true,
+          rescheduleOnReboot: true,
+        );
 
         isLoading = false;
         return prayers;

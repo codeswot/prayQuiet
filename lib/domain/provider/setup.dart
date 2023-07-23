@@ -1,10 +1,8 @@
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:do_not_disturb/do_not_disturb.dart';
 import 'package:pray_quiet/data/api_data_fetch.dart';
 import 'package:pray_quiet/data/prayer_api_model.dart';
 import 'package:pray_quiet/domain/provider/shared_pref.dart';
 import 'package:pray_quiet/domain/service/service.dart';
-import 'package:pray_quiet/vm_background.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 part 'setup.g.dart';
@@ -25,16 +23,16 @@ class Setup extends _$Setup {
       logger.info("is-setup-complete is $value");
       setupComplete = value ? SetupState.complete : SetupState.notStarted;
       if (setupComplete != null) {
-        final now = DateTime.now();
-        AndroidAlarmManager.periodic(
-          const Duration(seconds: 1), //debug 1 sec
-          now.microsecondsSinceEpoch.hashCode,
-          vmBackgroundService,
-          startAt: now,
-          wakeup: true,
-          allowWhileIdle: true,
-          rescheduleOnReboot: true,
-        );
+        // final now = DateTime.now();
+        // AndroidAlarmManager.periodic(
+        //   const Duration(minutes: 10),
+        //   now.microsecondsSinceEpoch.hashCode,
+        //   vmBackgroundService,
+        //   startAt: now,
+        //   wakeup: true,
+        //   allowWhileIdle: true,
+        //   rescheduleOnReboot: true,
+        // );
         return setupComplete!;
       }
     }
@@ -48,14 +46,8 @@ class Setup extends _$Setup {
           ref.watch(getSharedPreferencesProvider);
       logger.info("Attempting complete setup ...");
       state = SetupState.inProgress;
-      final DoNotDisturb doNotDisturb = DoNotDisturb();
-      bool isPermissionGranted = await doNotDisturb.isPermissionGranted;
       await NotificationService().requestPermissions();
-
-      if (!isPermissionGranted) {
-        await doNotDisturb.requestNotificationPolicyAccess();
-        await doNotDisturb.openDoNotDisturbSettings();
-      }
+      await DoNotDisturb().openDoNotDisturbSettings();
 
       final city = await LocationService.determinePosition();
       final PrayerApiModel data = await ApiDataFetch.getPrayerTime(city);
@@ -64,11 +56,11 @@ class Setup extends _$Setup {
 
       pref.whenData(
         (repo) async => {
-          repo.setString(
+          await repo.setString(
             "pray_time",
             data.toRawJson(),
           ),
-          repo.setBool("is-setup-complete", true),
+          await repo.setBool("is-setup-complete", true),
           logger.info("Set is-setup-complete to true"),
           state = SetupState.complete
         },

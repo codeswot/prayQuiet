@@ -8,8 +8,12 @@ class DoNotDisturbService {
     final now = DateTime.now();
     try {
       final res = await PrayerTimeService.getPrayerTime(false);
+      if (res == null) {
+        _logger.error('Res is null');
+        return;
+      }
       final dateService = DateService();
-      final Map<String, dynamic> prayers = res![dateService.getApisToday()]!;
+      final Map<String, dynamic> prayers = res[dateService.getApisToday()];
 
       _logger.info("Attempting to enable or disable DoNotDisturb");
       prayers.remove('Sunrise');
