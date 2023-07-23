@@ -14,7 +14,7 @@ class DailyPrayerTile extends StatelessWidget {
   final String? time;
   final String currentPrayer;
 
-  bool get isCurrentPrayer => title == currentPrayer;
+  bool get isCurrentPrayer => currentPrayer.startsWith(title);
   @override
   Widget build(BuildContext context) {
     return Container(

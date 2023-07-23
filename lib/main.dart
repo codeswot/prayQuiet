@@ -1,40 +1,29 @@
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pray_quiet/domain/provider/setup.dart';
-import 'package:pray_quiet/domain/service/background.dart';
-
+import 'package:pray_quiet/domain/service/service.dart';
 import 'package:pray_quiet/presentation/screen/screen.dart';
 import 'package:pray_quiet/presentation/style/colors.dart';
-import 'package:workmanager/workmanager.dart';
 
-@pragma('vm:entry-point')
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) async {
-    final res = await BackgroundService().setDoNotDisturb();
-    return Future.value(res);
-  });
-}
-
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
-  Workmanager().registerPeriodicTask(
-    "pray-quiet",
-    "dnd",
-    frequency: const Duration(minutes: 15),
-  );
-  final container = ProviderContainer();
+  // Initialize services
+  NotificationService().initializeNotifications();
+  await AndroidAlarmManager.initialize();
 
-  runApp(UncontrolledProviderScope(
-    container: container,
-    child: const PrayQuietApp(),
-  ));
+  runApp(
+    const ProviderScope(
+      child: PrayQuietApp(),
+    ),
+  );
 }
 
 class PrayQuietApp extends StatelessWidget {
-  const PrayQuietApp({super.key});
+  const PrayQuietApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
