@@ -48,15 +48,15 @@ class BackgroundTaskScheduleService {
     final LoggingService logger = LoggingService();
 
     try {
-      //test - start
-      final res = await PrayerTimeService.getAllPrayerTime(isDebug: false);
-      if (res == null) {
-        logger.error('Res is null');
-        return;
-      }
-      final dateService = DateService();
-      final Map<String, dynamic> prayers = res[dateService.getApisToday()];
-//test - end
+//       //test - start
+//       final res = await PrayerTimeService.getAllPrayerTime(isDebug: false);
+//       if (res == null) {
+//         logger.error('Res is null');
+//         return;
+//       }
+//       final dateService = DateService();
+//       final Map<String, dynamic> prayers = res[dateService.getApisToday()];
+// //test - end
       prayers.remove('Sunrise');
       for (final prayer in prayers.entries) {
         final enableTaskId = prayer.key.hashCode;
@@ -71,7 +71,7 @@ class BackgroundTaskScheduleService {
           date: DateTime.now(),
           customTime: prayer.value,
         ).add(
-          const Duration(minutes: 1),
+          const Duration(hours: 1),
         );
 
         final disableDoNotDisturbTime =
