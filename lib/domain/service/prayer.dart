@@ -4,7 +4,8 @@ import 'package:pray_quiet/domain/service/service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PrayerTimeService {
-  static Future<Map<String, dynamic>?> getPrayerTime(bool isDebug) async {
+  static Future<Map<String, dynamic>?> getAllPrayerTime(
+      {required bool isDebug}) async {
     final LoggingService logger = LoggingService();
     try {
       if (isDebug) {
@@ -17,12 +18,12 @@ class PrayerTimeService {
           asrjuristicMethod: "Debug Asr Juristic Method",
           praytimes: {
             debugTodayDate: {
-              "Fajr": "08:46",
-              "Sunrise": "08:21",
-              "Dhuhr": "09:40",
-              "Asr": "11:30",
-              "Maghrib": "12:55",
-              "Isha'a": "13:40"
+              "Fajr": "08:18",
+              "Sunrise": "08:00",
+              "Dhuhr": "08:20",
+              "Asr": "08:23",
+              "Maghrib": "08:26",
+              "Isha'a": "08:29"
             },
             debugTommorowDate: {
               "Fajr": "05:00",
@@ -43,7 +44,6 @@ class PrayerTimeService {
       }
     } catch (e) {
       logger.error('An Error occured getPrayerTime $e');
-      
     }
     return null;
   }
@@ -51,7 +51,8 @@ class PrayerTimeService {
   static Future<CalculatedPrayerInfo> getNextPrayer() async {
     try {
       final now = DateTime.now();
-      final Map<String, dynamic>? prayerDataInfo = await getPrayerTime(true);
+      final Map<String, dynamic>? prayerDataInfo =
+          await getAllPrayerTime(isDebug: false);
       if (prayerDataInfo != null) {
         final date = DateService().getApisToday();
         final prayers = prayerDataInfo[date];

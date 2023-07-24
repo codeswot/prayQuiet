@@ -7,6 +7,14 @@ import 'package:pray_quiet/domain/service/service.dart';
 import 'package:pray_quiet/presentation/screen/screen.dart';
 import 'package:pray_quiet/presentation/style/colors.dart';
 
+@pragma('vm:entry-point')
+void test() {
+  final LoggingService logger = LoggingService();
+  final now = DateTime.now();
+
+  logger.debug('I got called at ${now.toIso8601String()}');
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

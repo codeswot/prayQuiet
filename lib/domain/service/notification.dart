@@ -31,7 +31,7 @@ class NotificationService {
     final now = DateTime.now();
 
     final Map<String, dynamic>? prayerDataInfo =
-        await PrayerTimeService.getPrayerTime(true);
+        await PrayerTimeService.getAllPrayerTime(isDebug: false);
     if (prayerDataInfo != null) {
       final date = DateService().getApisToday();
       final prayers = prayerDataInfo[date];
@@ -114,7 +114,11 @@ class NotificationService {
     }
   }
 
-  Future<void> showNotification(String prayerName, String prayerTime) async {
+  Future<void> showNotification({
+    required String prayerName,
+    required String prayerTime,
+    required bool isEnabling,
+  }) async {
     const androidChannel = AndroidNotificationDetails(
       'PrayQuiet',
       "Notifications",
@@ -132,8 +136,12 @@ class NotificationService {
 
     await flutterLocalNotificationsPlugin.show(
       3,
-      "$prayerName at $prayerTime",
-      'Putting device on total silence 🤫',
+      isEnabling
+          ? "$prayerName at $prayerTime"
+          : "Assalamualaikum Warahmatullahi 🤲🏽",
+      isEnabling
+          ? 'Putting device on total silence 🤫'
+          : '$prayerName successful without distraction 😌 - Device is back to normal, be sure to check missed calls and notifications',
       details,
     );
   }
@@ -161,52 +169,6 @@ class NotificationService {
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()!
         .requestPermission();
-  }
-
-  Future<void> cancelNotification(String prayerName) async {
-    final LoggingService logger = LoggingService();
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    try {
-      logger.info("Attempting to cancel notification");
-
-      final int notificationId = prefs.getInt(prayerName) ?? 0;
-
-      await flutterLocalNotificationsPlugin.cancel(notificationId);
-
-      logger.info("Notification cancelled");
-    } catch (e) {
-      logger.error("Error cancelling notification $e");
-    }
-  }
-
-  Future<void> cancelNotification2minAfterPrayerTime() async {
-    final res = await PrayerTimeService.getPrayerTime(true);
-
-    final DateService dateService = DateService();
-
-    Map<String, dynamic>? prayers = res![dateService.getApisToday()];
-
-    final LoggingService logger = LoggingService();
-    try {
-      logger.info("Attempting to cancel Notification2minAfterPrayerTime");
-      final now = DateTime.now();
-      for (final prayer in prayers!.entries) {
-        final formattedPrayerTime = DateService.getFormartedDateWitCustomTime(
-          date: now,
-          customTime: prayer.value,
-        );
-
-        if (now.isAfter(formattedPrayerTime.add(const Duration(minutes: 2)))) {
-          cancelNotification(prayer.key);
-        }
-      }
-
-      logger.info("Notification2minAfterPrayerTime cancelled");
-    } catch (e) {
-      logger.error("Error cancelling Notification2minAfterPrayerTime $e");
-      return;
-    }
   }
 
   //
