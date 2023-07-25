@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pray_quiet/domain/provider/prayer.dart';
 import 'package:pray_quiet/presentation/style/style.dart';
 import 'package:pray_quiet/presentation/widget/widget.dart';
@@ -34,7 +35,7 @@ class Home extends StatelessWidget {
             pinned: true,
             snap: true,
             stretch: true,
-            expandedHeight: 250,
+            expandedHeight: 230.h,
             flexibleSpace: FlexibleSpaceBar(
               background: Stack(
                 children: [
@@ -42,10 +43,10 @@ class Home extends StatelessWidget {
                     AppAssets.bg,
                     fit: BoxFit.cover,
                     width: double.infinity,
-                    height: MediaQuery.of(context).size.height * 0.3,
+                    height: 300.h,
                   ),
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.3,
+                    height: 300.h,
                     color: AppColors.primary.withOpacity(0.4),
                   ),
                   const Padding(

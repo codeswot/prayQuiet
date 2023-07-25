@@ -4,6 +4,7 @@ import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pray_quiet/domain/provider/setup.dart';
 import 'package:pray_quiet/domain/service/service.dart';
 import 'package:pray_quiet/presentation/screen/screen.dart';
@@ -39,42 +40,53 @@ class PrayQuietApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'PrayQuiet',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.primary,
-        ),
-        useMaterial3: true,
-        fontFamily: 'Nunito',
-      ),
-      home: Material(
-        child: Consumer(
-          builder: (context, ref, _) {
-            final setup = ref.watch(setupProvider);
-            if (setup.isComplete) {
-              return const Home();
-            }
-            if (setup.isNotStarted) {
-              return Animate(
-                effects: const [
-                  FadeEffect(
-                    duration: Duration(milliseconds: 500),
-                    delay: Duration(milliseconds: 800),
-                  )
-                ],
-                child: const Introduction(),
-              );
-            }
-            return const Center(
-              child: CircleAvatar(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          },
-        ),
-      ),
+    return ScreenUtilInit(
+      designSize: const Size(360, 690),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MaterialApp(
+          title: 'PrayQuiet',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: AppColors.primary,
+            ),
+            useMaterial3: true,
+            textTheme: TextTheme(
+              labelLarge: TextStyle(fontSize: 45.sp),
+              bodyMedium: TextStyle(fontSize: 30.sp),
+            ),
+            fontFamily: 'Nunito',
+          ),
+          home: Material(
+            child: Consumer(
+              builder: (context, ref, _) {
+                final setup = ref.watch(setupProvider);
+                if (setup.isComplete) {
+                  return const Home();
+                }
+                if (setup.isNotStarted) {
+                  return Animate(
+                    effects: const [
+                      FadeEffect(
+                        duration: Duration(milliseconds: 500),
+                        delay: Duration(milliseconds: 800),
+                      )
+                    ],
+                    child: const Introduction(),
+                  );
+                }
+                return const Center(
+                  child: CircleAvatar(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }
