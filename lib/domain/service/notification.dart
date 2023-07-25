@@ -141,7 +141,7 @@ class NotificationService {
           : "Assalamualaikum Warahmatullahi 🤲🏽",
       isEnabling
           ? 'Putting device on total silence 🤫'
-          : 'Prayer successful without distraction 😌 - Device is back to normal, be sure to check missed calls and notifications',
+          : 'Prayer successful without distraction 😌',
       details,
     );
   }
