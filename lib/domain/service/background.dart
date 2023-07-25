@@ -71,7 +71,7 @@ class BackgroundTaskScheduleService {
           date: DateTime.now(),
           customTime: prayer.value,
         ).add(
-          const Duration(hours: 1),
+          const Duration(minutes: 20),
         );
 
         final disableDoNotDisturbTime =

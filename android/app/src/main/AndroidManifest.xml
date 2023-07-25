@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
-    <application android:label="PrayQuiet" android:name="${applicationName}" android:icon="@mipmap/ic_launcher">
+    <application android:label="PrayQuiet" android:name="${applicationName}" android:icon="@mipmap/launcher_icon">
 
         <service android:name="com.geeksaxis.do_not_disturb.DndNotificationListenerService" android:label="DND Notification Listener" android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" android:exported="true">
             <intent-filter>

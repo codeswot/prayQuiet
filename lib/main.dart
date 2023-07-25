@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -6,6 +8,7 @@ import 'package:pray_quiet/domain/provider/setup.dart';
 import 'package:pray_quiet/domain/service/service.dart';
 import 'package:pray_quiet/presentation/screen/screen.dart';
 import 'package:pray_quiet/presentation/style/colors.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 @pragma('vm:entry-point')
 void test() {
@@ -16,7 +19,8 @@ void test() {
 }
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   // Initialize services
   NotificationService().initializeNotifications();
@@ -27,6 +31,7 @@ void main() async {
       child: PrayQuietApp(),
     ),
   );
+  FlutterNativeSplash.remove();
 }
 
 class PrayQuietApp extends StatelessWidget {

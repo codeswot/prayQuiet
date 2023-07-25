@@ -137,7 +137,7 @@ class NotificationService {
     await flutterLocalNotificationsPlugin.show(
       3,
       isEnabling
-          ? "$prayerName at $prayerTime"
+          ? "Time for $prayerName"
           : "Assalamualaikum Warahmatullahi 🤲🏽",
       isEnabling
           ? 'Putting device on total silence 🤫'
@@ -149,7 +149,7 @@ class NotificationService {
 //
   void initializeNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);

@@ -1,0 +1,16 @@
+flutter_native_splash:
+
+  color: "#F0FBF4"
+ 
+
+  image: assets/images/icon.png
+
+  # Following are Android 12 specific parameter.
+  android_12:
+
+    color: "#F0FBF4"
+
+    # App icon background color.
+    icon_background_color: "#111111"
+
+
