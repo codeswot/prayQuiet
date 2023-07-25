@@ -54,8 +54,8 @@ class PrayQuietApp extends StatelessWidget {
             ),
             useMaterial3: true,
             textTheme: TextTheme(
-              labelLarge: TextStyle(fontSize: 45.sp),
-              bodyMedium: TextStyle(fontSize: 30.sp),
+              labelLarge: TextStyle(fontSize: 15.sp),
+              bodyMedium: TextStyle(fontSize: 25.sp),
             ),
             fontFamily: 'Nunito',
           ),
