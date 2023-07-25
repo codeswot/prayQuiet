@@ -137,11 +137,11 @@ class NotificationService {
     await flutterLocalNotificationsPlugin.show(
       3,
       isEnabling
-          ? "Time for $prayerName"
+          ? "Time for Prayer" //$prayerName
           : "Assalamualaikum Warahmatullahi 🤲🏽",
       isEnabling
           ? 'Putting device on total silence 🤫'
-          : '$prayerName successful without distraction 😌 - Device is back to normal, be sure to check missed calls and notifications',
+          : 'Prayer successful without distraction 😌 - Device is back to normal, be sure to check missed calls and notifications',
       details,
     );
   }
