@@ -114,36 +114,41 @@ class NotificationService {
     }
   }
 
-  Future<void> showNotification({
+  Future<bool> showNotification({
     required String prayerName,
     required String prayerTime,
     required bool isEnabling,
   }) async {
-    const androidChannel = AndroidNotificationDetails(
-      'PrayQuiet',
-      "Notifications",
-      importance: Importance.max,
-      priority: Priority.high,
-      playSound: true,
-      enableVibration: true,
-      enableLights: true,
-      ongoing: false,
-      visibility: NotificationVisibility.public,
-    );
+    try {
+      const androidChannel = AndroidNotificationDetails(
+        'PrayQuiet',
+        "Notifications",
+        importance: Importance.max,
+        priority: Priority.high,
+        playSound: true,
+        enableVibration: true,
+        enableLights: true,
+        ongoing: false,
+        visibility: NotificationVisibility.public,
+      );
 
-    var details = const NotificationDetails(android: androidChannel);
-    await flutterLocalNotificationsPlugin.cancel(3);
+      var details = const NotificationDetails(android: androidChannel);
+      await flutterLocalNotificationsPlugin.cancel(3);
 
-    await flutterLocalNotificationsPlugin.show(
-      3,
-      isEnabling
-          ? "Time for Prayer" //$prayerName
-          : "Assalamualaikum Warahmatullahi 🤲🏽",
-      isEnabling
-          ? 'Putting device on total silence 🤫'
-          : 'Prayer successful without distraction 😌',
-      details,
-    );
+      await flutterLocalNotificationsPlugin.show(
+        3,
+        isEnabling
+            ? "Time for Prayer" //$prayerName
+            : "Assalamualaikum Warahmatullahi 🤲🏽",
+        isEnabling
+            ? 'Putting device on total silence 🤫'
+            : 'Prayer successful without distraction 😌',
+        details,
+      );
+      return true;
+    } catch (e) {
+      return true;
+    }
   }
 
 //

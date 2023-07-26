@@ -19,16 +19,19 @@ class DoNotDisturbService {
       _logger.info("Attempting to enable or disable DoNotDisturb");
       prayers.remove('Sunrise');
       for (final prayer in prayers.entries) {
-        await NotificationService().showNotification(
+        final res = await NotificationService().showNotification(
           prayerName: prayer.key,
           isEnabling: true,
           prayerTime: DateService.fmt12Hr(prayer.value),
         );
-        await Future.delayed(
-          const Duration(seconds: 8),
-        );
-        await _doNotDisturb.setStatus(true);
-        _logger.info("Do not disturb enabled");
+        if (res) {
+          //|| !res
+          await Future.delayed(
+            const Duration(seconds: 8),
+          );
+          await _doNotDisturb.setStatus(true);
+          _logger.info("Do not disturb enabled");
+        }
       }
     } catch (e) {
       _logger.error('Error setting do not disturb: $e');
