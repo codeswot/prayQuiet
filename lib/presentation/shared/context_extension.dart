@@ -16,6 +16,12 @@ extension ContextExtensions on BuildContext {
 
   void pop() => Navigator.of(this).pop();
 
+  void push(Widget screen) {
+    Navigator.of(this).push(MaterialPageRoute<void>(
+      builder: (BuildContext context) => screen,
+    ));
+  }
+
   Future<T?> showAppDialog<T>(Widget dialog) => showDialog<T>(
         useSafeArea: false,
         // barrierDismissible: false,

@@ -165,10 +165,14 @@ class NotificationService {
   }
 
   Future<bool?> requestPermissions() async {
-    return flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()!
-        .requestPermission();
+    try {
+      return flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()!
+          .requestPermission();
+    } catch (e) {
+      return false;
+    }
   }
 
   //

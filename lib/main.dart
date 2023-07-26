@@ -66,21 +66,15 @@ class PrayQuietApp extends StatelessWidget {
                 if (setup.isComplete) {
                   return const Home();
                 }
-                if (setup.isNotStarted) {
-                  return Animate(
-                    effects: const [
-                      FadeEffect(
-                        duration: Duration(milliseconds: 500),
-                        delay: Duration(milliseconds: 800),
-                      )
-                    ],
-                    child: const Introduction(),
-                  );
-                }
-                return const Center(
-                  child: CircleAvatar(
-                    child: CircularProgressIndicator(),
-                  ),
+
+                return Animate(
+                  effects: const [
+                    FadeEffect(
+                      duration: Duration(milliseconds: 500),
+                      delay: Duration(milliseconds: 100),
+                    )
+                  ],
+                  child: const Introduction(),
                 );
               },
             ),

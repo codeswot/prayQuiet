@@ -1,5 +1,6 @@
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:pray_quiet/domain/service/service.dart';
 
 class LocationService {
   static Future<String> determinePosition() async {
@@ -8,6 +9,7 @@ class LocationService {
       LocationPermission permission;
 
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
+
       if (!serviceEnabled) {
         return Future.error('Location services are disabled.');
       }
@@ -21,8 +23,7 @@ class LocationService {
       }
 
       if (permission == LocationPermission.deniedForever) {
-        return Future.error(
-            'Location permissions are permanently denied, we cannot request permissions.');
+        await Geolocator.openAppSettings();
       }
 
       final l = await Geolocator.getCurrentPosition();
@@ -37,6 +38,25 @@ class LocationService {
       return validPlacemark.locality ?? 'Lagos';
     } catch (e) {
       rethrow;
+    }
+  }
+
+//
+
+  static Future<bool> isServiceAvailable() async {
+    try {
+      return await Geolocator.isLocationServiceEnabled();
+    } catch (e) {
+      LoggingService().error('An Error occured $e');
+      return false;
+    }
+  }
+
+  static Future<bool> openLocationSettings() async {
+    try {
+      return await Geolocator.openLocationSettings();
+    } catch (e) {
+      return false;
     }
   }
 }

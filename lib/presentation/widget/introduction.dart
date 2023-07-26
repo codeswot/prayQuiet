@@ -34,6 +34,7 @@ class IntroductionPage extends StatelessWidget {
         LottieBuilder.asset(
           intro.image,
           repeat: false,
+          frameRate: FrameRate.composition,
         ),
         const SizedBox(height: 32),
         Text(

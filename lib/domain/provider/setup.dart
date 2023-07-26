@@ -10,6 +10,7 @@ part 'setup.g.dart';
 @Riverpod(keepAlive: true)
 class Setup extends _$Setup {
   SetupState? setupComplete;
+
   @override
   SetupState build() {
     LoggingService logger = LoggingService();
@@ -23,16 +24,6 @@ class Setup extends _$Setup {
       logger.info("is-setup-complete is $value");
       setupComplete = value ? SetupState.complete : SetupState.notStarted;
       if (setupComplete != null) {
-        // final now = DateTime.now();
-        // AndroidAlarmManager.periodic(
-        //   const Duration(minutes: 10),
-        //   now.microsecondsSinceEpoch.hashCode,
-        //   vmBackgroundService,
-        //   startAt: now,
-        //   wakeup: true,
-        //   allowWhileIdle: true,
-        //   rescheduleOnReboot: true,
-        // );
         return setupComplete!;
       }
     }
@@ -46,12 +37,11 @@ class Setup extends _$Setup {
           ref.watch(getSharedPreferencesProvider);
       logger.info("Attempting complete setup ...");
       state = SetupState.inProgress;
+
       await NotificationService().requestPermissions();
-      await DoNotDisturb().openDoNotDisturbSettings();
-
       final city = await LocationService.determinePosition();
+      DoNotDisturb().openDoNotDisturbSettings();
       final PrayerApiModel data = await ApiDataFetch.getPrayerTime(city);
-
       logger.info("Prayer time fetched for $city is ${data.toRawJson()}");
 
       pref.whenData(
@@ -86,10 +76,10 @@ class Setup extends _$Setup {
   }
 }
 
-enum SetupState { notStarted, inProgress, complete }
+enum SetupState { notStarted, complete, inProgress }
 
 extension SetupStateExtension on SetupState {
   bool get isNotStarted => this == SetupState.notStarted;
-  bool get isInProgress => this == SetupState.inProgress;
   bool get isComplete => this == SetupState.complete;
+  bool get isInProgress => this == SetupState.inProgress;
 }

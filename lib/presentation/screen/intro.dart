@@ -117,9 +117,7 @@ class _IntroductionState extends ConsumerState<Introduction> {
                   TextButton(
                     onPressed: () {
                       if (currentIndex == _intros.length - 1) {
-                        context.showAppDialog(
-                          const PermissionDialog(),
-                        );
+                        context.push(const PermissionScreen());
                       } else {
                         _pageController.nextPage(
                           duration: const Duration(milliseconds: 300),
