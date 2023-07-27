@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   do_not_disturb
+  flutter_volume_controller
   geolocator_windows
   permission_handler_windows
   url_launcher_windows
