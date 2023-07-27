@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pray_quiet/domain/provider/settings.dart';
 import 'package:pray_quiet/presentation/shared/context_extension.dart';
 import 'package:pray_quiet/presentation/style/style.dart';
 import 'package:pray_quiet/presentation/widget/dialog.dart';
@@ -52,11 +54,6 @@ class AfterPrayerBehaviour extends StatefulWidget {
 
 class _AfterPrayerBehaviourState extends State<AfterPrayerBehaviour> {
   int currentIndex = 0;
-  void update(int v) {
-    setState(() {
-      currentIndex = v;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,44 +92,50 @@ class _AfterPrayerBehaviourState extends State<AfterPrayerBehaviour> {
           ],
         ),
         SizedBox(height: 4.h),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: AfterPrayerBehaviourType.values.length,
-          itemBuilder: (ctx, idx) {
-            final item = AfterPrayerBehaviourType.values[idx];
-            return Padding(
-              padding: EdgeInsets.only(top: 3.h),
-              child: GestureDetector(
-                onTap: () {
-                  currentIndex = item.index;
-                },
-                child: SettingsItemContainer(
-                  child: Row(
-                    children: [
-                      Icon(
-                        _buildBehaviourIcon(item),
-                        size: 13.sp,
-                      ),
-                      SizedBox(width: 8.w),
-                      Text(
-                        'Put Device on ${item.name}',
-                      ),
-                      const Spacer(),
-                      Radio.adaptive(
-                        value: item.index,
-                        groupValue: 1,
-                        onChanged: (v) {
-                          update(v ?? 0);
-                        },
-                      )
-                    ],
+        Consumer(builder: (context, ref, _) {
+          final setting = ref.watch(settingsProvider.notifier);
+
+          return ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: AfterPrayerBehaviourType.values.length,
+            itemBuilder: (ctx, idx) {
+              final item = AfterPrayerBehaviourType.values[idx];
+              return Padding(
+                padding: EdgeInsets.only(top: 3.h),
+                child: GestureDetector(
+                  onTap: () {
+                    setting.setbehaviourType(item.index);
+                    setState(() {});
+                  },
+                  child: SettingsItemContainer(
+                    child: Row(
+                      children: [
+                        Icon(
+                          _buildBehaviourIcon(item),
+                          size: 13.sp,
+                        ),
+                        SizedBox(width: 8.w),
+                        Text(
+                          'Put Device on ${item.name}',
+                        ),
+                        const Spacer(),
+                        Radio.adaptive(
+                          value: item.index,
+                          groupValue: setting.behaviourType,
+                          onChanged: (v) {
+                            setting.setbehaviourType(v ?? item.index);
+                            setState(() {});
+                          },
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
-        ),
+              );
+            },
+          );
+        }),
       ],
     );
   }
@@ -154,12 +157,6 @@ class _AfterPrayerBehaviourState extends State<AfterPrayerBehaviour> {
   }
 }
 
-enum AfterPrayerBehaviourType {
-  vibrate,
-  ringer,
-  silence,
-}
-
 class AfterPrayerInterval extends StatefulWidget {
   const AfterPrayerInterval({
     super.key,
@@ -171,11 +168,6 @@ class AfterPrayerInterval extends StatefulWidget {
 
 class _AfterPrayerIntervalState extends State<AfterPrayerInterval> {
   int currentIndex = 0;
-  void update(int v) {
-    setState(() {
-      currentIndex = v;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -214,44 +206,50 @@ class _AfterPrayerIntervalState extends State<AfterPrayerInterval> {
           ],
         ),
         SizedBox(height: 4.h),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: AfterPrayerBehaviourType.values.length,
-          itemBuilder: (ctx, idx) {
-            final item = AfterPrayerIntervalType.values[idx];
-            return Padding(
-              padding: EdgeInsets.only(top: 3.h),
-              child: GestureDetector(
-                onTap: () {
-                  currentIndex = item.index;
-                },
-                child: SettingsItemContainer(
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.timelapse,
-                        size: 13.sp,
-                      ),
-                      SizedBox(width: 8.w),
-                      Text(
-                        _buildIntervalText(item),
-                      ),
-                      const Spacer(),
-                      Radio.adaptive(
-                        value: item.index,
-                        groupValue: 1,
-                        onChanged: (v) {
-                          update(v ?? 0);
-                        },
-                      )
-                    ],
+        Consumer(builder: (context, ref, _) {
+          final settings = ref.watch(settingsProvider.notifier);
+
+          return ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: AfterPrayerBehaviourType.values.length,
+            itemBuilder: (ctx, idx) {
+              final item = AfterPrayerIntervalType.values[idx];
+              return Padding(
+                padding: EdgeInsets.only(top: 3.h),
+                child: GestureDetector(
+                  onTap: () {
+                    settings.setIntervalType(item.index);
+                    setState(() {});
+                  },
+                  child: SettingsItemContainer(
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.timelapse,
+                          size: 13.sp,
+                        ),
+                        SizedBox(width: 8.w),
+                        Text(
+                          _buildIntervalText(item),
+                        ),
+                        const Spacer(),
+                        Radio.adaptive(
+                          value: item.index,
+                          groupValue: settings.intervalType,
+                          onChanged: (v) {
+                            settings.setIntervalType(v ?? item.index);
+                            setState(() {});
+                          },
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
-        ),
+              );
+            },
+          );
+        }),
       ],
     );
   }
@@ -269,10 +267,4 @@ class _AfterPrayerIntervalState extends State<AfterPrayerInterval> {
         return 'After 15 miniutes';
     }
   }
-}
-
-enum AfterPrayerIntervalType {
-  min15,
-  min30,
-  hr1,
 }

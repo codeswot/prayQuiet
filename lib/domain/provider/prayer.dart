@@ -1,5 +1,6 @@
 import 'package:pray_quiet/data/api_data_fetch.dart';
 import 'package:pray_quiet/data/prayer_api_model.dart';
+import 'package:pray_quiet/domain/provider/settings.dart';
 import 'package:pray_quiet/domain/provider/shared_pref.dart';
 
 import 'package:pray_quiet/domain/service/service.dart';
@@ -21,7 +22,12 @@ class Prayer extends _$Prayer {
         ref.watch(getSharedPreferencesProvider);
     if (pref.hasValue) {
       logger.info("Attempting to fetch prayer from shared preferences.");
+
       final String? value = pref.value!.getString("pray_time");
+
+      final int intervalIdx = pref.value!.getInt("interval_type") ?? 1;
+
+      final interval = AfterPrayerIntervalType.values[intervalIdx];
       logger.info("prayer time $value");
       if (value != null) {
         prayerDataInfo = PrayerApiModel.fromRawJson(value);
@@ -33,8 +39,15 @@ class Prayer extends _$Prayer {
         prayers = Prayers.fromJson(res);
 
         logger.info("prayers fetched is $res");
-
-        BackgroundTaskScheduleService().start(prayers!.toJson());
+        //enable service
+        final serviceEnabled = pref.value!.getBool('enable_service') ?? true;
+        if (serviceEnabled) {
+          BackgroundTaskScheduleService().toggle(
+            prayers: prayers!.toJson(),
+            afterPrayerInterval: interval,
+            isEnabling: true,
+          );
+        }
 
         isLoading = false;
         return prayers;
@@ -57,6 +70,10 @@ class Prayer extends _$Prayer {
           ref.watch(getSharedPreferencesProvider);
       logger.info("Attempting to update prayer time ...");
 
+      final int intervalIdx = pref.value!.getInt("interval_type") ?? 1;
+
+      final interval = AfterPrayerIntervalType.values[intervalIdx];
+
       pref.whenData(
         (repo) {
           repo.setString(
@@ -77,8 +94,12 @@ class Prayer extends _$Prayer {
             prayers = Prayers.fromJson(res);
 
             logger.info("updated prayers fetched is $res");
-
             isLoading = false;
+            BackgroundTaskScheduleService().toggle(
+              prayers: prayers!.toJson(),
+              afterPrayerInterval: interval,
+              isEnabling: true,
+            );
             state = prayers;
           }
         },

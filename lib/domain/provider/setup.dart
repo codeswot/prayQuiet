@@ -14,20 +14,25 @@ class Setup extends _$Setup {
   @override
   SetupState build() {
     LoggingService logger = LoggingService();
-    logger.info("Setup provider building.");
-    AsyncValue<SharedPreferences> pref =
-        ref.watch(getSharedPreferencesProvider);
-    if (pref.hasValue) {
-      logger.info(
-          "Attempting to fetch if setup is completed from shared preferences.");
-      final bool value = pref.value!.getBool("is-setup-complete") ?? false;
-      logger.info("is-setup-complete is $value");
-      setupComplete = value ? SetupState.complete : SetupState.notStarted;
-      if (setupComplete != null) {
-        return setupComplete!;
+    try {
+      logger.info("Setup provider building.");
+      AsyncValue<SharedPreferences> pref =
+          ref.watch(getSharedPreferencesProvider);
+      if (pref.hasValue) {
+        logger.info(
+            "Attempting to fetch if setup is completed from shared preferences.");
+        final bool value = pref.value!.getBool("is-setup-complete") ?? false;
+        logger.info("is-setup-complete is $value");
+        setupComplete = value ? SetupState.complete : SetupState.notStarted;
+        if (setupComplete != null) {
+          return setupComplete!;
+        }
       }
+      return SetupState.notStarted;
+    } catch (e) {
+      logger.error('Error occured building setup');
+      return SetupState.notStarted;
     }
-    return SetupState.notStarted;
   }
 
   Future<void> attemptSetup() async {

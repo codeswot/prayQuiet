@@ -100,9 +100,9 @@ class PermissionScreen extends StatelessWidget {
                                     .read(setupProvider.notifier)
                                     .attemptSetup();
 
-                                if (context.mounted) {
-                                  context.pop();
-                                }
+                                // if (context.mounted) {
+                                //   context.pop();
+                                // }
                               },
                         child: isLoading
                             ? const SizedBox(

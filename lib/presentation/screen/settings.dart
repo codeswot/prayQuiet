@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pray_quiet/domain/provider/settings.dart';
 
 import 'package:pray_quiet/presentation/style/style.dart';
 import 'package:pray_quiet/presentation/widget/widget.dart';
 
-class Settings extends StatelessWidget {
+class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
 
+  @override
+  State<Settings> createState() => _SettingsState();
+}
+
+class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
@@ -27,31 +34,37 @@ class Settings extends StatelessWidget {
             child: Column(
               children: [
                 SettingsItemContainer(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Enable Service',
-                            style: AppTypography.m3BodylLarge(
-                              fontWeight: FontWeight.bold,
+                  child: Consumer(builder: (context, ref, _) {
+                    final setting = ref.watch(settingsProvider.notifier);
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Enable Service',
+                              style: AppTypography.m3BodylLarge(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          Switch.adaptive(
-                            value: true,
-                            onChanged: (v) {},
-                          )
-                        ],
-                      ),
-                      SizedBox(height: 2.h),
-                      const SettingsDivider(),
-                      SizedBox(height: 2.h),
-                      const AfterPrayerBehaviour(),
-                    ],
-                  ),
+                            Switch.adaptive(
+                              value: setting.serviceEnable ?? true,
+                              onChanged: (v) {
+                                setting.toggleService(v);
+                                setState(() {});
+                              },
+                            )
+                          ],
+                        ),
+                        SizedBox(height: 2.h),
+                        const SettingsDivider(),
+                        SizedBox(height: 2.h),
+                        const AfterPrayerBehaviour(),
+                      ],
+                    );
+                  }),
                 ),
                 SizedBox(height: 20.h),
                 SettingsItemContainer(
