@@ -121,7 +121,7 @@ class _AfterPrayerBehaviourState extends State<AfterPrayerBehaviour> {
                       const Spacer(),
                       Radio.adaptive(
                         value: item.index,
-                        groupValue: currentIndex,
+                        groupValue: 1,
                         onChanged: (v) {
                           update(v ?? 0);
                         },
@@ -201,7 +201,7 @@ class _AfterPrayerIntervalState extends State<AfterPrayerInterval> {
                   const AppDialog(
                     title: 'After prayer interval',
                     description:
-                        'This refers to the interval or waiting period to remove the device from "Do Not Disturb" mode after prayer. By default, the waiting period is set to 15 minutes. During this time, the device will remain in "Do Not Disturb" mode after the prayer event before automatically reverting to its normal mode of operation.',
+                        'This refers to the interval or waiting period to remove the device from "Do Not Disturb" mode after prayer. By default, the waiting period is set to 30 minutes. During this time, the device will remain in "Do Not Disturb" mode after the prayer event before automatically reverting to its normal mode of operation.',
                   ),
                 );
               },
@@ -240,7 +240,7 @@ class _AfterPrayerIntervalState extends State<AfterPrayerInterval> {
                       const Spacer(),
                       Radio.adaptive(
                         value: item.index,
-                        groupValue: currentIndex,
+                        groupValue: 1,
                         onChanged: (v) {
                           update(v ?? 0);
                         },
