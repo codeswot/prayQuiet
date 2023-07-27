@@ -55,7 +55,7 @@ class PrayQuietApp extends StatelessWidget {
             useMaterial3: true,
             textTheme: TextTheme(
               labelLarge: TextStyle(fontSize: 15.sp),
-              bodyMedium: TextStyle(fontSize: 25.sp),
+              bodyMedium: TextStyle(fontSize: 14.sp),
             ),
             fontFamily: 'Nunito',
           ),
@@ -64,7 +64,7 @@ class PrayQuietApp extends StatelessWidget {
               builder: (context, ref, _) {
                 final setup = ref.watch(setupProvider);
                 if (setup.isComplete) {
-                  return const Home();
+                  return const AppLayout();
                 }
 
                 return Animate(

@@ -22,40 +22,46 @@ class AppDialog extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
       ),
-      margin: EdgeInsets.symmetric(vertical: 200.h, horizontal: 30.w),
+      margin: EdgeInsets.symmetric(vertical: 175.h, horizontal: 30.w),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
         child: Material(
           child: Container(
             color: AppColors.primary,
             child: Container(
-              padding: const EdgeInsets.all(32),
+              padding: EdgeInsets.all(25.sp),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
                 color: AppColors.secondary.withOpacity(0.4),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircleAvatar(
                     backgroundColor: AppColors.secondary.withOpacity(0.5),
-                    radius: 35.sp,
+                    radius: 28.sp,
                     child: Icon(
                       Icons.info,
                       color: AppColors.text,
                       size: 25.sp,
                     ),
                   ),
-                  SizedBox(height: 10.h),
+                  SizedBox(height: 8.h),
                   Text(
                     title,
-                    style: AppTypography.m3TitlelLarge(),
+                    textAlign: TextAlign.center,
+                    style: AppTypography.m3TitlelLarge(
+                      fontSize: 19.sp,
+                    ),
                   ),
                   SizedBox(height: 5.h),
                   Text(
                     description,
                     textAlign: TextAlign.center,
-                    style: AppTypography.m3BodylLarge(),
+                    style: AppTypography.m3BodylLarge(
+                      fontSize: 12.sp,
+                    ),
                   ),
                   SizedBox(height: 15.h),
                   ElevatedButton(

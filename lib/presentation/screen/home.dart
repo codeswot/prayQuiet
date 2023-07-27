@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pray_quiet/domain/provider/prayer.dart';
-import 'package:pray_quiet/presentation/style/style.dart';
 import 'package:pray_quiet/presentation/widget/widget.dart';
-import 'package:shimmer/shimmer.dart';
 
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
@@ -15,50 +13,13 @@ class Home extends StatelessWidget {
       ref.watch(prayerProvider);
       return CustomScrollView(
         slivers: [
-          SliverAppBar(
-            actions: [
-              IconButton(
-                onPressed: () =>
-                    ref.watch(prayerProvider.notifier).updatePrayer(),
-                icon: Shimmer.fromColors(
-                  baseColor: AppColors.text,
-                  highlightColor: AppColors.secondary,
-                  child: const Icon(
-                    Icons.location_on_outlined,
-                    color: AppColors.text,
-                    size: 24,
-                  ),
-                ),
-              )
-            ],
-            floating: true,
-            pinned: true,
-            snap: true,
-            stretch: true,
-            expandedHeight: 230.h,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Stack(
-                children: [
-                  Image.asset(
-                    AppAssets.bg,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: 300.h,
-                  ),
-                  Container(
-                    height: 300.h,
-                    color: AppColors.primary.withOpacity(0.4),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 32,
-                    ),
-                    child: CurrentPrayer(),
-                  ),
-                ],
-              ),
-            ),
+          SliverLayoutBuilder(
+            builder: (BuildContext context, SliverConstraints constraints) {
+              return const CustomSliverAppBar(
+                title: 'Home',
+                height: 300,
+              );
+            },
           ),
           SliverToBoxAdapter(
             child: Container(
@@ -70,10 +31,6 @@ class Home extends StatelessWidget {
               child: const DailyPrayerList(),
             ),
           ),
-          // SliverFillRemaining(
-          //   hasScrollBody: false,
-          //   fillOverscroll: true,
-          //   child:
         ],
       );
     });
