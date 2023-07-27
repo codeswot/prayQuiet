@@ -93,7 +93,7 @@ class _AfterPrayerBehaviourState extends State<AfterPrayerBehaviour> {
         ),
         SizedBox(height: 4.h),
         Consumer(builder: (context, ref, _) {
-          final setting = ref.watch(settingsProvider.notifier);
+          final settings = ref.watch(settingsProvider.notifier);
 
           return ListView.builder(
             shrinkWrap: true,
@@ -104,9 +104,15 @@ class _AfterPrayerBehaviourState extends State<AfterPrayerBehaviour> {
               return Padding(
                 padding: EdgeInsets.only(top: 3.h),
                 child: GestureDetector(
-                  onTap: () {
-                    setting.setbehaviourType(item.index);
-                    setState(() {});
+                  onTap: () async {
+                    bool enabled = await serviceFirstInterceptor(
+                      context,
+                      settings.serviceEnable ?? false,
+                    );
+                    if (enabled) {
+                      settings.setbehaviourType(item.index);
+                      setState(() {});
+                    }
                   },
                   child: SettingsItemContainer(
                     child: Row(
@@ -122,10 +128,16 @@ class _AfterPrayerBehaviourState extends State<AfterPrayerBehaviour> {
                         const Spacer(),
                         Radio.adaptive(
                           value: item.index,
-                          groupValue: setting.behaviourType,
-                          onChanged: (v) {
-                            setting.setbehaviourType(v ?? item.index);
-                            setState(() {});
+                          groupValue: settings.behaviourType,
+                          onChanged: (v) async {
+                            bool enabled = await serviceFirstInterceptor(
+                              context,
+                              settings.serviceEnable ?? false,
+                            );
+                            if (enabled) {
+                              settings.setbehaviourType(v ?? item.index);
+                              setState(() {});
+                            }
                           },
                         )
                       ],
@@ -218,9 +230,15 @@ class _AfterPrayerIntervalState extends State<AfterPrayerInterval> {
               return Padding(
                 padding: EdgeInsets.only(top: 3.h),
                 child: GestureDetector(
-                  onTap: () {
-                    settings.setIntervalType(item.index);
-                    setState(() {});
+                  onTap: () async {
+                    final enabled = await serviceFirstInterceptor(
+                      context,
+                      settings.serviceEnable ?? false,
+                    );
+                    if (enabled) {
+                      settings.setIntervalType(item.index);
+                      setState(() {});
+                    }
                   },
                   child: SettingsItemContainer(
                     child: Row(
@@ -237,9 +255,15 @@ class _AfterPrayerIntervalState extends State<AfterPrayerInterval> {
                         Radio.adaptive(
                           value: item.index,
                           groupValue: settings.intervalType,
-                          onChanged: (v) {
-                            settings.setIntervalType(v ?? item.index);
-                            setState(() {});
+                          onChanged: (v) async {
+                            final enabled = await serviceFirstInterceptor(
+                              context,
+                              settings.serviceEnable ?? false,
+                            );
+                            if (enabled) {
+                              settings.setIntervalType(v ?? item.index);
+                              setState(() {});
+                            }
                           },
                         )
                       ],
@@ -267,4 +291,18 @@ class _AfterPrayerIntervalState extends State<AfterPrayerInterval> {
         return 'After 15 miniutes';
     }
   }
+}
+
+serviceFirstInterceptor(BuildContext context, bool value) async {
+  if (!value) {
+    await context.showAppDialog(
+      const AppDialog(
+        title: 'Service Disabled',
+        description:
+            'To toggle your prayer silence preference, you need to enable the service first. To do this, simply switch on the "Enable Service" option. This will allow you to customize your device\'s behavior during prayer times, such as setting it to silent mode, vibrate mode, or ringer mode as per your preference. Once the service is enabled, you can configure the settings according to your needs.',
+      ),
+    );
+    return false;
+  }
+  return true;
 }

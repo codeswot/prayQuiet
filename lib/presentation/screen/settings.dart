@@ -77,7 +77,7 @@ class _SettingsState extends State<Settings> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Edit Prayer Time',
+                              'Edit Prayer Time (coming soon)',
                               style: AppTypography.m3BodylLarge(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -88,11 +88,13 @@ class _SettingsState extends State<Settings> {
                                   AppColors.primary.withOpacity(0.2),
                               child: IconButton(
                                 padding: EdgeInsets.zero,
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.arrow_forward,
-                                  color: AppColors.aleGreen,
+                                  color: AppColors.text.withOpacity(0.4),
+
+                                  // AppColors.aleGreen,
                                 ),
-                                onPressed: () {},
+                                onPressed: null,
                               ),
                             ),
                           ],
