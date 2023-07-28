@@ -30,8 +30,9 @@ class _CustomSliverAppBarState extends State<CustomSliverAppBar> {
         return SliverAppBar(
           actions: [
             IconButton(
-              onPressed: () =>
-                  ref.watch(prayerProvider.notifier).updatePrayer(),
+              onPressed: () async {
+                ref.watch(prayerProvider.notifier).updatePrayer();
+              },
               icon: Shimmer.fromColors(
                 baseColor: AppColors.text,
                 highlightColor: AppColors.secondary,

@@ -1,6 +1,4 @@
 import 'package:do_not_disturb/do_not_disturb.dart';
-import 'package:pray_quiet/data/api_data_fetch.dart';
-import 'package:pray_quiet/data/prayer_api_model.dart';
 import 'package:pray_quiet/domain/provider/shared_pref.dart';
 import 'package:pray_quiet/domain/service/service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -44,17 +42,10 @@ class Setup extends _$Setup {
       state = SetupState.inProgress;
 
       await NotificationService().requestPermissions();
-      final city = await LocationService.determinePosition();
       DoNotDisturb().openDoNotDisturbSettings();
-      final PrayerApiModel data = await ApiDataFetch.getPrayerTime(city);
-      logger.info("Prayer time fetched for $city is ${data.toRawJson()}");
 
       pref.whenData(
         (repo) async => {
-          await repo.setString(
-            "pray_time",
-            data.toRawJson(),
-          ),
           await repo.setBool("is-setup-complete", true),
           logger.info("Set is-setup-complete to true"),
           state = SetupState.complete

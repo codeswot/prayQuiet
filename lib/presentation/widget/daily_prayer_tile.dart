@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pray_quiet/domain/service/date.dart';
-
 import 'package:pray_quiet/presentation/style/style.dart';
 
 class DailyPrayerTile extends StatelessWidget {
@@ -38,7 +36,7 @@ class DailyPrayerTile extends StatelessWidget {
           Text(title, style: AppTypography.m3BodylLarge()),
           const Spacer(),
           Text(
-            DateService.fmt12Hr(time ?? ''),
+            time ?? '--',
             style: AppTypography.m3BodylLarge(),
           ),
         ],

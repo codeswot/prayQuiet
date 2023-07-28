@@ -3,7 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:pray_quiet/domain/service/service.dart';
 
 class LocationService {
-  static Future<String> determinePosition() async {
+  static Future<Position> determinePosition() async {
     try {
       bool serviceEnabled;
       LocationPermission permission;
@@ -27,6 +27,17 @@ class LocationService {
       }
 
       final l = await Geolocator.getCurrentPosition();
+      return l;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+//
+  static Future<String> getAddress() async {
+    try {
+      final Position l = await Geolocator.getCurrentPosition();
+
       List<Placemark> placemarks =
           await placemarkFromCoordinates(l.latitude, l.longitude);
 
@@ -40,7 +51,6 @@ class LocationService {
       rethrow;
     }
   }
-
 //
 
   static Future<bool> isServiceAvailable() async {

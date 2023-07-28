@@ -1,6 +1,6 @@
-class CalculatedPrayerInfo {
+class PrayerInfo {
   final DateTime dateTime;
   final String prayerName;
 
-  CalculatedPrayerInfo(this.dateTime, this.prayerName);
+  PrayerInfo(this.dateTime, this.prayerName);
 }

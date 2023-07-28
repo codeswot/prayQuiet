@@ -15,72 +15,47 @@ class DailyPrayerList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, _) {
-      bool isLoading = ref.watch(prayerProvider.notifier).isLoading ?? false;
-
-      if (isLoading) {
-        return Shimmer.fromColors(
-          baseColor: Colors.grey[300]!,
-          highlightColor: Colors.grey[100]!,
-          child: Container(
-            height: 100,
-            width: double.infinity,
-            color: Colors.white,
-          ),
-        );
-      }
       final prayers = ref.watch(prayerProvider);
 
-      return StreamBuilder<CalculatedPrayerInfo?>(
-          stream:
-              PrayerTimeService.getCurrentOrNextPrayerStream(prayers!.toJson()),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Shimmer.fromColors(
-                  baseColor: Colors.grey[300]!,
-                  highlightColor: Colors.grey[100]!,
-                  child: Container(
-                    height: 100,
-                    width: double.infinity,
-                    color: Colors.white,
-                  ),
-                ),
-              );
-            }
+      return prayers.when(data: (dailyPrayers) {
+        bool isLoading = ref.watch(prayerProvider.notifier).isLoading ?? false;
 
-            final currentPrayer = snapshot.data!.prayerName;
+        if (isLoading) {
+          return Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: Container(
+              height: 100,
+              width: double.infinity,
+              color: Colors.white,
+            ),
+          );
+        }
+        if (dailyPrayers == null) {
+          return const SizedBox();
+        }
+
+        return StreamBuilder<PrayerInfo?>(
+          stream: PrayerTimeService.getCurrentOrNextPrayerStream(dailyPrayers),
+          builder: (context, snapshot) {
+            final currentPrayer = snapshot.data?.prayerName;
 
             return Column(
-              children: [
-                DailyPrayerTile(
-                  title: 'Fajr',
-                  time: prayers.fajr,
-                  currentPrayer: currentPrayer,
-                ),
-                DailyPrayerTile(
-                  title: 'Dhuhr',
-                  time: prayers.dhuhr,
-                  currentPrayer: currentPrayer,
-                ),
-                DailyPrayerTile(
-                  title: 'Asr',
-                  time: prayers.asr,
-                  currentPrayer: currentPrayer,
-                ),
-                DailyPrayerTile(
-                  title: 'Maghrib',
-                  time: prayers.maghrib,
-                  currentPrayer: currentPrayer,
-                ),
-                DailyPrayerTile(
-                  title: "Isha'a",
-                  time: prayers.ishaA,
-                  currentPrayer: currentPrayer,
-                ),
-              ],
+              children: dailyPrayers.map((dailyPrayer) {
+                return DailyPrayerTile(
+                  title: dailyPrayer.prayerName,
+                  time: DateService.getFormartedTime12(dailyPrayer.dateTime),
+                  currentPrayer: currentPrayer ?? 'Fajr',
+                );
+              }).toList(),
             );
-          });
+          },
+        );
+      }, loading: () {
+        return const SizedBox();
+      }, error: (err, trace) {
+        return const SizedBox();
+      });
     });
   }
 }

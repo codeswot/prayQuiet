@@ -10,22 +10,16 @@ class DoNotDisturbService {
   Future<void> enable() async {
     try {
       await _doNotDisturb.setStatus(false);
-      //test
-      final res = await PrayerTimeService.getAllPrayerTime(isDebug: false);
-      if (res == null) {
-        _logger.error('Res is null');
-        return;
-      }
-      final dateService = DateService();
-      final Map<String, dynamic> prayers = res[dateService.getApisToday()];
+
+      final prayers = await PrayerTimeService.fetchDailyPrayerTime();
 
       _logger.info("Attempting to enable or disable DoNotDisturb");
-      prayers.remove('Sunrise');
-      for (final prayer in prayers.entries) {
+
+      for (final prayer in prayers) {
         final res = await NotificationService().showNotification(
-          prayerName: prayer.key,
+          prayerName: prayer.prayerName,
           isEnabling: true,
-          prayerTime: DateService.fmt12Hr(prayer.value),
+          prayerTime: DateService.getFormartedTime12(prayer.dateTime),
         );
         if (res) {
           //|| !res
@@ -45,13 +39,6 @@ class DoNotDisturbService {
   Future<void> disable() async {
     try {
       SharedPreferences pref = await SharedPreferences.getInstance();
-      final res = await PrayerTimeService.getAllPrayerTime(isDebug: false);
-      if (res == null) {
-        _logger.error('Res is null');
-        return;
-      }
-      final dateService = DateService();
-      final Map<String, dynamic> prayers = res[dateService.getApisToday()];
 
       _logger.info("Attempting to enable or disable DoNotDisturb");
 
@@ -81,15 +68,13 @@ class DoNotDisturbService {
       await SoundMode.setSoundMode(soundMode);
       _logger.info("Do not disturb disabled with mode ${soundMode.name}");
 
-      prayers.remove('Sunrise');
-      for (final prayer in prayers.entries) {
-        await NotificationService().showNotification(
-          prayerName: prayer.key,
-          isEnabling: false,
-          prayerTime: DateService.fmt12Hr(prayer.value),
-        );
-        // TODO: Add as'salamualiakum custom notification sound
-      }
+      await NotificationService().showNotification(
+        prayerName: '', //no need
+        isEnabling: false,
+        prayerTime: '', //no need
+      );
+
+      // TODO: Add as'salamualiakum custom notification sound
     } catch (e) {
       _logger.error('Error setting do not disturb: $e');
     }

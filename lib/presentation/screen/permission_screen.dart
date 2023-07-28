@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:pray_quiet/domain/provider/setup.dart';
 import 'package:pray_quiet/domain/service/service.dart';
 
@@ -16,6 +19,11 @@ class PermissionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, _) {
+      SystemChrome.setSystemUIOverlayStyle(
+        const SystemUiOverlayStyle(
+          systemNavigationBarColor: AppColors.pG,
+        ),
+      );
       return Scaffold(
         body: SafeArea(
           child: Container(
@@ -46,11 +54,12 @@ class PermissionScreen extends StatelessWidget {
                   style: AppTypography.m3BodylLarge(
                     color: AppColors.text,
                     fontWeight: FontWeight.w500,
+                    fontSize: 10.sp,
                   ),
                 ),
-                const SizedBox(height: 36),
+                SizedBox(height: 30.h),
                 const PermissionsListView(),
-                const SizedBox(height: 36),
+                SizedBox(height: 20.h),
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -58,11 +67,12 @@ class PermissionScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                      'on tapping the "Grant Access" button the app will open the Do not disturb settings page for you, scroll and find Pray Quiet then toggle it on "Allow Do not disturb access" ',
+                      'When you tap the "Grant Access" button, the app will open the "Do Not Disturb" settings page. It guides you to find and activate the "Pray Quiet" option, allowing the app to use the "Do Not Disturb" feature during prayer times according to your preferences. This helps you stay undisturbed and focused during your moments of prayer or quiet reflection." ',
                       textAlign: TextAlign.center,
                       style: AppTypography.m3BodylLarge(
                         color: AppColors.text,
                         fontWeight: FontWeight.w500,
+                        fontSize: 10.sp,
                       )),
                 ),
                 const Spacer(),
@@ -97,12 +107,24 @@ class PermissionScreen extends StatelessWidget {
                                 }
 
                                 await ref
-                                    .read(setupProvider.notifier)
+                                    .watch(setupProvider.notifier)
                                     .attemptSetup();
-
-                                // if (context.mounted) {
-                                //   context.pop();
-                                // }
+                                SystemChrome.setSystemUIOverlayStyle(
+                                  const SystemUiOverlayStyle(
+                                    systemNavigationBarColor: AppColors.pG,
+                                  ),
+                                );
+                                if (ref.watch(setupProvider).isComplete) {
+                                  SystemChrome.setSystemUIOverlayStyle(
+                                    const SystemUiOverlayStyle(
+                                      systemNavigationBarColor:
+                                          AppColors.carmyGreen,
+                                    ),
+                                  );
+                                  if (context.mounted) {
+                                    context.pop();
+                                  }
+                                }
                               },
                         child: isLoading
                             ? const SizedBox(
@@ -117,7 +139,16 @@ class PermissionScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       TextButton(
-                        onPressed: isLoading ? null : () => context.pop(),
+                        onPressed: isLoading
+                            ? null
+                            : () {
+                                SystemChrome.setSystemUIOverlayStyle(
+                                  const SystemUiOverlayStyle(
+                                    systemNavigationBarColor: AppColors.introW,
+                                  ),
+                                );
+                                context.pop();
+                              },
                         child: const Text('Not now'),
                       ),
                     ],
@@ -140,6 +171,8 @@ class PermissionsListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         ListTile(
           contentPadding: EdgeInsets.zero,
@@ -151,7 +184,7 @@ class PermissionsListView extends StatelessWidget {
             style: AppTypography.m3BodylLarge(
               color: AppColors.text,
               fontWeight: FontWeight.w600,
-              fontSize: 14,
+              fontSize: 10.sp,
             ),
           ),
           subtitle: Text(
@@ -159,11 +192,11 @@ class PermissionsListView extends StatelessWidget {
             style: AppTypography.m3BodylLarge(
               color: AppColors.text,
               fontWeight: FontWeight.w500,
-              fontSize: 12,
+              fontSize: 9.sp,
             ),
           ),
         ),
-        const Divider(),
+        Divider(height: 3.h),
         ListTile(
           contentPadding: EdgeInsets.zero,
           leading: const Icon(
@@ -174,7 +207,7 @@ class PermissionsListView extends StatelessWidget {
             style: AppTypography.m3BodylLarge(
               color: AppColors.text,
               fontWeight: FontWeight.w600,
-              fontSize: 14,
+              fontSize: 10.sp,
             ),
           ),
           subtitle: Text(
@@ -182,11 +215,11 @@ class PermissionsListView extends StatelessWidget {
             style: AppTypography.m3BodylLarge(
               color: AppColors.text,
               fontWeight: FontWeight.w500,
-              fontSize: 12,
+              fontSize: 9.sp,
             ),
           ),
         ),
-        const Divider(),
+        Divider(height: 3.h),
         ListTile(
           contentPadding: EdgeInsets.zero,
           leading: const Icon(
@@ -197,7 +230,7 @@ class PermissionsListView extends StatelessWidget {
             style: AppTypography.m3BodylLarge(
               color: AppColors.text,
               fontWeight: FontWeight.w600,
-              fontSize: 14,
+              fontSize: 10.sp,
             ),
           ),
           subtitle: Text(
@@ -205,11 +238,11 @@ class PermissionsListView extends StatelessWidget {
             style: AppTypography.m3BodylLarge(
               color: AppColors.text,
               fontWeight: FontWeight.w500,
-              fontSize: 12,
+              fontSize: 9.sp,
             ),
           ),
         ),
-        const Divider(),
+        Divider(height: 3.h),
       ],
     );
   }

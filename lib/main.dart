@@ -1,5 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages
 
+import 'dart:io';
+
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,7 +28,9 @@ void main() async {
 
   // Initialize services
   NotificationService().initializeNotifications();
-  await AndroidAlarmManager.initialize();
+  if (Platform.isAndroid) {
+    await AndroidAlarmManager.initialize();
+  }
 
   runApp(
     const ProviderScope(
@@ -41,12 +45,6 @@ class PrayQuietApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColors.carmyGreen,
-      ),
-    );
-
     return ScreenUtilInit(
       designSize: const Size(360, 690),
       minTextAdapt: true,

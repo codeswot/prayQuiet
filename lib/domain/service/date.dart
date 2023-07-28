@@ -86,6 +86,11 @@ class DateService {
     return formatter.format(date);
   }
 
+  static getFormartedTime12(DateTime date) {
+    final DateFormat formatter = DateFormat('h:mm a');
+    return formatter.format(date);
+  }
+
   static getFormartedHijriDate(DateTime date) {
     HijriCalendar hijriCalendar = HijriCalendar.fromDate(date);
 

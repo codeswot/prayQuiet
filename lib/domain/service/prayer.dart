@@ -1,9 +1,60 @@
 import 'package:pray_quiet/data/prayer_api_model.dart';
 import 'package:pray_quiet/data/prayer_info_model.dart';
 import 'package:pray_quiet/domain/service/service.dart';
+import 'package:pray_times/pray_times.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PrayerTimeService {
+  static Future<List<PrayerInfo>> fetchDailyPrayerTime() async {
+    final LoggingService logger = LoggingService();
+    try {
+      final DateTime now = DateTime.now();
+      final pos = await LocationService.determinePosition();
+      PrayerTimes prayers = PrayerTimes();
+      prayers.setTimeFormat(prayers.Time24);
+      prayers.setCalcMethod(prayers.MWL);
+      prayers.setAsrJuristic(prayers.Shafii);
+      prayers.setAdjustHighLats(prayers.AngleBased);
+      List<int> offsets = [0, 0, 0, 0, 0, 0, 0];
+      prayers.tune(offsets);
+
+      List<String> prayerTimes = prayers.getPrayerTimes(
+        now,
+        pos.latitude,
+        pos.longitude,
+        1,
+      );
+      List<String> prayerNames = prayers.getTimeNames();
+      List<Map<String, String>> dataMap = [];
+
+      for (int i = 0; i < prayerTimes.length; i++) {
+        dataMap.add({
+          prayerNames[i]: prayerTimes[i],
+        });
+      }
+      dataMap.removeWhere((entry) =>
+          entry.keys.contains("Sunrise") || entry.keys.contains("Sunset"));
+      dataMap.map((e) => null);
+
+      List<PrayerInfo> dataList = dataMap.map((entry) {
+        String prayerName = entry.keys.first;
+        String prayerTime = entry.values.first;
+
+        DateTime prayerDateTime = DateService.getFormartedDateWitCustomTime(
+            date: now, customTime: prayerTime);
+
+        return PrayerInfo(prayerDateTime, prayerName);
+      }).toList();
+
+      logger.info('Prayer fetched ');
+      return dataList;
+    } catch (e) {
+      logger.error(
+          '[PrayerTimeService](newGetAllPrayerTime): An Error occured $e');
+      rethrow;
+    }
+  }
+
   static Future<Map<String, dynamic>?> getAllPrayerTime(
       {required bool isDebug}) async {
     final LoggingService logger = LoggingService();
@@ -48,7 +99,7 @@ class PrayerTimeService {
     return null;
   }
 
-  static Future<CalculatedPrayerInfo> getNextPrayer() async {
+  static Future<PrayerInfo> getNextPrayer() async {
     try {
       final now = DateTime.now();
       final Map<String, dynamic>? prayerDataInfo =
@@ -65,7 +116,7 @@ class PrayerTimeService {
           );
 
           if (now.isBefore(formattedPrayerTime)) {
-            return CalculatedPrayerInfo(
+            return PrayerInfo(
               formattedPrayerTime,
               prayer.key,
             );
@@ -80,14 +131,14 @@ class PrayerTimeService {
             customTime: prayers['Fajr'],
           );
 
-          return CalculatedPrayerInfo(
+          return PrayerInfo(
             nextDayFajrTime,
             'Fajr',
           );
         }
       }
 
-      return CalculatedPrayerInfo(
+      return PrayerInfo(
         DateTime.now(),
         'Fajr',
       );
@@ -96,49 +147,31 @@ class PrayerTimeService {
     }
   }
 
-  static CalculatedPrayerInfo? getCurrentOrNextPrayer(
-      Map<String, dynamic> prayers) {
+  static PrayerInfo? getCurrentOrNextPrayer(List<PrayerInfo> prayers) {
     final now = DateTime.now();
 
-    prayers.remove('Sunrise');
+    PrayerInfo? nextPrayer;
 
-    CalculatedPrayerInfo? nextPrayer;
-
-    for (final prayer in prayers.entries) {
-      final formattedPrayerTime = DateService.getFormartedDateWitCustomTime(
-        date: now,
-        customTime: prayer.value,
-      );
-
-      if (now.isBefore(formattedPrayerTime) ||
-          now.isAtSameMomentAs(formattedPrayerTime)) {
+    for (final prayer in prayers) {
+      if (now.isBefore(prayer.dateTime) ||
+          now.isAtSameMomentAs(prayer.dateTime)) {
         // If the current time is before or at the same time as the next prayer, return it.
-        return CalculatedPrayerInfo(
-          formattedPrayerTime,
-          prayer.key,
-        );
-      } else if (now.isAfter(formattedPrayerTime)) {
-        final difference = now.difference(formattedPrayerTime);
+        return prayer;
+      } else if (now.isAfter(prayer.dateTime)) {
+        final difference = now.difference(prayer.dateTime);
         if (difference.inMinutes <= 10) {
           // If the current time is within 10 minutes after the prayer, return it.
-          return CalculatedPrayerInfo(
-            formattedPrayerTime,
-            prayer.key,
-          );
+          return prayer;
         }
       }
     }
 
-    final lastPrayer = prayers.entries.last;
-    if (lastPrayer.key == "Isha'a") {
+    final lastPrayer = prayers.last;
+    if (lastPrayer.prayerName == "Isha") {
       final nextDay = now.add(const Duration(days: 1));
-      final nextDayFajrTime = DateService.getFormartedDateWitCustomTime(
-        date: nextDay,
-        customTime: prayers['Fajr'],
-      );
 
-      return CalculatedPrayerInfo(
-        nextDayFajrTime,
+      return PrayerInfo(
+        nextDay,
         'Fajr (Next Day)',
       );
     }
@@ -146,8 +179,8 @@ class PrayerTimeService {
     return nextPrayer;
   }
 
-  static Stream<CalculatedPrayerInfo?> getCurrentOrNextPrayerStream(
-      Map<String, dynamic> prayers) async* {
+  static Stream<PrayerInfo?> getCurrentOrNextPrayerStream(
+      List<PrayerInfo> prayers) async* {
     while (true) {
       final now = DateTime.now();
       final currentOrNextPrayer = getCurrentOrNextPrayer(prayers);
