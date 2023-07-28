@@ -48,9 +48,9 @@ class Setup extends _$Setup {
         (repo) async => {
           await repo.setBool("is-setup-complete", true),
           logger.info("Set is-setup-complete to true"),
-          state = SetupState.complete
         },
       );
+      state = SetupState.complete;
     } catch (e) {
       state = SetupState.notStarted;
       rethrow;

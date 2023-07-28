@@ -14,6 +14,16 @@ class Introduction extends ConsumerStatefulWidget {
 }
 
 class _IntroductionState extends ConsumerState<Introduction> {
+  @override
+  void initState() {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        systemNavigationBarColor: AppColors.introG,
+      ),
+    );
+    super.initState();
+  }
+
   final List<IntroductionModel> _intros = <IntroductionModel>[
     IntroductionModel(
       title: 'Assalamualaikum\n🤝',

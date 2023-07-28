@@ -9,7 +9,12 @@ class PrayerTimeService {
     final LoggingService logger = LoggingService();
     try {
       final DateTime now = DateTime.now();
+      logger
+          .info('(fetchDailyPrayerTime) starting at ${now.toIso8601String()} ');
       final pos = await LocationService.determinePosition();
+      logger.info(
+          'gotten location at lng:${pos.longitude} and lat:${pos.latitude}');
+
       PrayerTimes prayers = PrayerTimes();
       prayers.setTimeFormat(prayers.Time24);
       prayers.setCalcMethod(prayers.MWL);
@@ -28,13 +33,13 @@ class PrayerTimeService {
       List<Map<String, String>> dataMap = [];
 
       for (int i = 0; i < prayerTimes.length; i++) {
-        dataMap.add({
-          prayerNames[i]: prayerTimes[i],
-        });
+        dataMap.add(
+          {prayerNames[i]: prayerTimes[i]},
+        );
+        logger.info('got prayers ${prayerNames[i]}: ${prayerTimes[i]}');
       }
       dataMap.removeWhere((entry) =>
           entry.keys.contains("Sunrise") || entry.keys.contains("Sunset"));
-      dataMap.map((e) => null);
 
       List<PrayerInfo> dataList = dataMap.map((entry) {
         String prayerName = entry.keys.first;

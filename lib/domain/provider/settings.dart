@@ -31,7 +31,7 @@ class Settings extends _$Settings {
     try {
       AsyncValue<SharedPreferences> pref =
           ref.watch(getSharedPreferencesProvider);
-      final dailyPrayers = await PrayerTimeService.fetchDailyPrayerTime();
+
       if (pref.hasValue) {
         final int intervalIdx = pref.value!.getInt("interval_type") ?? 1;
 
@@ -41,12 +41,14 @@ class Settings extends _$Settings {
           _logger.info("Attempting to set service to $value.");
           serviceEnable = value;
           await repo.setBool('enable_service', value);
+          _logger.info("service set to $value.");
+
+          final dailyPrayers = await PrayerTimeService.fetchDailyPrayerTime();
           BackgroundTaskScheduleService().toggle(
             prayers: dailyPrayers,
             afterPrayerInterval: interval,
             isEnabling: value,
           );
-          _logger.info("service set to $value.");
         });
       }
     } catch (e) {

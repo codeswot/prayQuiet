@@ -109,16 +109,12 @@ class PermissionScreen extends StatelessWidget {
                                 await ref
                                     .watch(setupProvider.notifier)
                                     .attemptSetup();
-                                SystemChrome.setSystemUIOverlayStyle(
-                                  const SystemUiOverlayStyle(
-                                    systemNavigationBarColor: AppColors.pG,
-                                  ),
-                                );
+
                                 if (ref.watch(setupProvider).isComplete) {
                                   SystemChrome.setSystemUIOverlayStyle(
                                     const SystemUiOverlayStyle(
                                       systemNavigationBarColor:
-                                          AppColors.carmyGreen,
+                                          AppColors.whitish,
                                     ),
                                   );
                                   if (context.mounted) {

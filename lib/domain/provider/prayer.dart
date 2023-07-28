@@ -44,12 +44,11 @@ class Prayer extends _$Prayer {
       }
 
       isLoading = false;
-      prayers = dailyPrayers;
-      return dailyPrayers;
     }
-
     isLoading = false;
-    return null;
+    prayers = dailyPrayers;
+
+    return dailyPrayers;
   }
 
   Future<void> updatePrayer() async {
