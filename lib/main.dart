@@ -84,23 +84,23 @@ class PrayQuietApp extends StatelessWidget {
           home: Material(
             child: Consumer(
               builder: (context, ref, _) {
+                SystemChrome.setSystemUIOverlayStyle(
+                  const SystemUiOverlayStyle(
+                    systemNavigationBarColor: AppColors.carmyGreen,
+                  ),
+                );
                 final setup = ref.watch(setupProvider);
                 if (setup.isComplete) {
-                  SystemChrome.setSystemUIOverlayStyle(
-                    const SystemUiOverlayStyle(
-                      systemNavigationBarColor: AppColors.carmyGreen,
-                    ),
-                  );
                   return const AppLayout();
                 }
 
-                // if (setup.isInProgress) {
-                //   SystemChrome.setSystemUIOverlayStyle(
-                //     const SystemUiOverlayStyle(
-                //       systemNavigationBarColor: AppColors.introG,
-                //     ),
-                //   );
-                // }
+                if (setup.isInProgress) {
+                  SystemChrome.setSystemUIOverlayStyle(
+                    const SystemUiOverlayStyle(
+                      systemNavigationBarColor: AppColors.introG,
+                    ),
+                  );
+                }
 
                 return Animate(
                   effects: const [

@@ -10,7 +10,6 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, _) {
-      
       ref.watch(prayerProvider);
       return CustomScrollView(
         slivers: [

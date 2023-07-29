@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:pray_quiet/presentation/screen/screen.dart';
-import 'package:pray_quiet/presentation/style/colors.dart';
 
 class AppLayout extends StatefulWidget {
   const AppLayout({super.key});
@@ -16,11 +14,6 @@ class _AppLayoutState extends State<AppLayout> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColors.whitish,
-      ),
-    );
     return Scaffold(
       body: PageView(
         controller: _pageController,
