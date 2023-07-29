@@ -57,7 +57,7 @@ class Setup extends _$Setup {
       state = SetupState.inProgress;
 
       await NotificationService().requestPermissions();
-      DoNotDisturb().openDoNotDisturbSettings();
+      await DoNotDisturb().openDoNotDisturbSettings();
       final g = await LocationService.determinePosition();
 
       Position pos = Position(lat: g.latitude, lng: g.longitude, mock: false);
