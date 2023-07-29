@@ -34,7 +34,7 @@ class BackgroundTaskScheduleService {
       rescheduleOnReboot: true,
       allowWhileIdle: true,
       exact: true,
-      wakeup: false,
+      wakeup: true,
     );
 
     // Schedule the periodic alarm starting from the next day
@@ -46,7 +46,7 @@ class BackgroundTaskScheduleService {
       rescheduleOnReboot: true,
       allowWhileIdle: true,
       exact: true,
-      wakeup: false,
+      wakeup: true,
     );
   }
 

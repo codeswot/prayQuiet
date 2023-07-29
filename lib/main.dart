@@ -20,13 +20,16 @@ void bgServe() async {
   final LoggingService logger = LoggingService();
   SharedPreferences pref = await SharedPreferences.getInstance();
   final now = DateTime.now();
-  final g = await LocationService.determinePosition();
+  final isReady = pref.getBool('is-setup-complete') ?? false;
+  if (isReady) {
+    final g = await LocationService.determinePosition();
 
-  Position pos = Position(lat: g.latitude, lng: g.longitude, mock: false);
+    Position pos = Position(lat: g.latitude, lng: g.longitude, mock: false);
 
-  pref.setString('position', pos.toRawJson());
+    pref.setString('position', pos.toRawJson());
 
-  logger.debug('I got called at ${now.toIso8601String()}');
+    logger.debug('I got called at ${now.toIso8601String()}');
+  }
 }
 
 void main() async {
@@ -46,7 +49,7 @@ void main() async {
     rescheduleOnReboot: true,
     allowWhileIdle: true,
     exact: true,
-    wakeup: false,
+    wakeup: true,
   );
 
   runApp(

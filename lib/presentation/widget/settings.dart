@@ -69,29 +69,33 @@ class _AfterPrayerBehaviourState extends State<AfterPrayerBehaviour> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            IconButton(
-              tooltip: 'After prayer behaviour information',
-              padding: EdgeInsets.zero,
-              iconSize: 10.sp,
-              splashRadius: 1.sp,
-              onPressed: () {
-                context.showAppDialog(
-                  const AppDialog(
-                    title: 'After prayer behaviour',
-                    description:
-                        'This setting deals with the behavior of your device after prayer time. It determines whether it should be set back to ringer mode, vibrate mode, or left on silence. By default, the device is set to ringer mode after prayer time.',
-                  ),
-                );
-              },
-              icon: Icon(
-                Icons.info_outline,
-                color: AppColors.aleGreen,
-                size: 10.sp,
+            SizedBox(width: 3.w),
+            SizedBox(
+              width: 15.w,
+              height: 15.h,
+              child: IconButton(
+                tooltip: 'After prayer behaviour information',
+                padding: EdgeInsets.zero,
+                iconSize: 15.sp,
+                splashRadius: 1.sp,
+                onPressed: () {
+                  context.showAppDialog(
+                    const AppDialog(
+                      title: 'After prayer behaviour',
+                      description:
+                          'This setting deals with the behavior of your device after prayer time. It determines whether it should be set back to ringer mode, vibrate mode, or left on silence. By default, the device is set to ringer mode after prayer time.',
+                    ),
+                  );
+                },
+                icon: Icon(
+                  Icons.info_outline,
+                  color: AppColors.aleGreen,
+                  size: 15.sp,
+                ),
               ),
             ),
           ],
         ),
-        SizedBox(height: 4.h),
         Consumer(builder: (context, ref, _) {
           final settings = ref.watch(settingsProvider.notifier);
 
@@ -102,7 +106,7 @@ class _AfterPrayerBehaviourState extends State<AfterPrayerBehaviour> {
             itemBuilder: (ctx, idx) {
               final item = AfterPrayerBehaviourType.values[idx];
               return Padding(
-                padding: EdgeInsets.only(top: 3.h),
+                padding: EdgeInsets.only(bottom: 3.h),
                 child: GestureDetector(
                   onTap: () async {
                     bool enabled = await serviceFirstInterceptor(
@@ -195,29 +199,33 @@ class _AfterPrayerIntervalState extends State<AfterPrayerInterval> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            IconButton(
-              tooltip: 'After prayer interval information',
-              padding: EdgeInsets.zero,
-              iconSize: 10.sp,
-              splashRadius: 1.sp,
-              onPressed: () {
-                context.showAppDialog(
-                  const AppDialog(
-                    title: 'After prayer interval',
-                    description:
-                        'This refers to the interval or waiting period to remove the device from "Do Not Disturb" mode after prayer. By default, the waiting period is set to 30 minutes. During this time, the device will remain in "Do Not Disturb" mode after the prayer event before automatically reverting to its normal mode of operation.',
-                  ),
-                );
-              },
-              icon: Icon(
-                Icons.info_outline,
-                color: AppColors.aleGreen,
-                size: 10.sp,
+            SizedBox(width: 3.w),
+            SizedBox(
+              width: 15.w,
+              height: 15.h,
+              child: IconButton(
+                tooltip: 'After prayer interval information',
+                padding: EdgeInsets.zero,
+                iconSize: 15.sp,
+                splashRadius: 1.sp,
+                onPressed: () {
+                  context.showAppDialog(
+                    const AppDialog(
+                      title: 'After prayer interval',
+                      description:
+                          'This refers to the interval or waiting period to remove the device from "Do Not Disturb" mode after prayer. By default, the waiting period is set to 30 minutes. During this time, the device will remain in "Do Not Disturb" mode after the prayer event before automatically reverting to its normal mode of operation.',
+                    ),
+                  );
+                },
+                icon: Icon(
+                  Icons.info_outline,
+                  color: AppColors.aleGreen,
+                  size: 15.sp,
+                ),
               ),
             ),
           ],
         ),
-        SizedBox(height: 4.h),
         Consumer(builder: (context, ref, _) {
           final settings = ref.watch(settingsProvider.notifier);
 
@@ -228,7 +236,7 @@ class _AfterPrayerIntervalState extends State<AfterPrayerInterval> {
             itemBuilder: (ctx, idx) {
               final item = AfterPrayerIntervalType.values[idx];
               return Padding(
-                padding: EdgeInsets.only(top: 3.h),
+                padding: EdgeInsets.only(bottom: 3.h),
                 child: GestureDetector(
                   onTap: () async {
                     final enabled = await serviceFirstInterceptor(

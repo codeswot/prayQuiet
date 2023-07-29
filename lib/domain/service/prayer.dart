@@ -1,18 +1,23 @@
-import 'package:pray_quiet/data/position.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:pray_quiet/data/position.dart' as p;
 import 'package:pray_quiet/data/prayer_info_model.dart';
 import 'package:pray_quiet/domain/service/service.dart';
 import 'package:pray_times/pray_times.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PrayerTimeService {
-  static Future<List<PrayerInfo>> fetchDailyPrayerTime() async {
+  static Future<List<PrayerInfo>> fetchDailyPrayerTime({Position? l}) async {
     final LoggingService logger = LoggingService();
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final String value = prefs.getString("position") ??
           '{"lat":"6.5244","lng":"3.3792","mock":"true"}';
-
-      final Position pos = Position.fromRawJson(value);
+      late p.Position pos;
+      if (l != null) {
+        p.Position(lat: l.latitude, lng: l.longitude, mock: false);
+      } else {
+        pos = p.Position.fromRawJson(value);
+      }
       final DateTime now = DateTime.now();
 
       logger.info('gotten location at lng:${pos.lng} and lat:${pos.lat}');
