@@ -1,4 +1,3 @@
-import 'package:pray_quiet/data/prayer_api_model.dart';
 import 'package:pray_quiet/data/prayer_info_model.dart';
 import 'package:pray_quiet/domain/provider/settings.dart';
 import 'package:pray_quiet/domain/provider/shared_pref.dart';
@@ -10,7 +9,6 @@ part 'prayer.g.dart';
 
 @Riverpod(keepAlive: true)
 class Prayer extends _$Prayer {
-  PrayerApiModel? prayerDataInfo;
   List<PrayerInfo>? prayers;
   bool? isLoading;
   @override

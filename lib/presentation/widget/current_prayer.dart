@@ -20,66 +20,80 @@ class CurrentPrayer extends StatelessWidget {
           if (dailyPrayers == null) {
             return const SizedBox();
           }
-          return StreamBuilder<PrayerInfo?>(
-              stream:
-                  PrayerTimeService.getCurrentOrNextPrayerStream(dailyPrayers),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const SizedBox();
-                }
-                final nextPrayer = snapshot.data!;
+          return Column(
+            children: [
+              StreamBuilder<PrayerInfo?>(
+                stream: PrayerTimeService.getCurrentOrNextPrayerStream(
+                    dailyPrayers),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const SizedBox();
+                  }
+                  final nextPrayer = snapshot.data!;
 
-                return Animate(
-                  effects: const [
-                    FadeEffect(
-                      duration: Duration(milliseconds: 500),
-                      delay: Duration(milliseconds: 50),
-                    ),
-                  ],
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        nextPrayer.prayerName,
-                        style: AppTypography.m3TitlelLarge(
-                          fontSize: 40,
-                        ),
-                      ),
-                      Text(
-                        DateService.fmt12Hr(
-                          DateService.getFormartedTime(nextPrayer.dateTime),
-                        ),
-                        style: AppTypography.m3TitlelMedium(),
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            DateService.getcountDownOrNow(nextPrayer.dateTime),
-                            style: AppTypography.m3BodylLarge(),
-                          ),
-                          FutureBuilder<String>(
-                              future: LocationService.getAddress(),
-                              builder: (context, snapshot) {
-                                return SizedBox(
-                                  width: 150,
-                                  child: Text(
-                                    snapshot.data ?? '--',
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                    textAlign: TextAlign.end,
-                                    style: AppTypography.m3BodylLarge(),
-                                  ),
-                                );
-                              }),
-                        ],
+                  return Animate(
+                    effects: const [
+                      FadeEffect(
+                        duration: Duration(milliseconds: 500),
+                        delay: Duration(milliseconds: 50),
                       ),
                     ],
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          nextPrayer.prayerName,
+                          style: AppTypography.m3TitlelLarge(
+                            fontSize: 40,
+                          ),
+                        ),
+                        Text(
+                          DateService.fmt12Hr(
+                            DateService.getFormartedTime(nextPrayer.dateTime),
+                          ),
+                          style: AppTypography.m3TitlelMedium(),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              DateService.getcountDownOrNow(
+                                  nextPrayer.dateTime),
+                              style: AppTypography.m3BodylLarge(),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+              Animate(
+                effects: const [
+                  FadeEffect(
+                    duration: Duration(milliseconds: 510),
+                    delay: Duration(milliseconds: 65),
                   ),
-                );
-              });
+                ],
+                child: FutureBuilder<String>(
+                    future: LocationService.getAddress(),
+                    builder: (context, snapshot) {
+                      return SizedBox(
+                        width: 150,
+                        child: Text(
+                          snapshot.data ?? '--',
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          textAlign: TextAlign.end,
+                          style: AppTypography.m3BodylLarge(),
+                        ),
+                      );
+                    }),
+              ),
+            ],
+          );
         }, loading: () {
           return const SizedBox();
         }, error: (err, trace) {

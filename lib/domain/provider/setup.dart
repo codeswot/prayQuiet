@@ -1,4 +1,5 @@
 import 'package:do_not_disturb/do_not_disturb.dart';
+import 'package:pray_quiet/data/position.dart';
 import 'package:pray_quiet/domain/provider/shared_pref.dart';
 import 'package:pray_quiet/domain/service/service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -43,10 +44,13 @@ class Setup extends _$Setup {
 
       await NotificationService().requestPermissions();
       DoNotDisturb().openDoNotDisturbSettings();
+      final g = await LocationService.determinePosition();
 
+      Position pos = Position(lat: g.latitude, lng: g.longitude, mock: false);
       pref.whenData(
-        (repo) async => {
-          await repo.setBool("is-setup-complete", true),
+        (repo) => {
+          repo.setBool("is-setup-complete", true),
+          repo.setString('position', pos.toRawJson()),
           logger.info("Set is-setup-complete to true"),
         },
       );
@@ -62,9 +66,11 @@ class Setup extends _$Setup {
 
     AsyncValue<SharedPreferences> pref =
         ref.watch(getSharedPreferencesProvider);
+
     pref.whenData(
-      (repo) => {
+      (repo) async => {
         repo.setBool("is-setup-complete", false),
+        repo.remove('position'),
         logger.info("is-setup-complete to false"),
         state = SetupState.notStarted
       },

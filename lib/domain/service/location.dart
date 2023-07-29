@@ -1,6 +1,8 @@
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:pray_quiet/data/position.dart' as p;
 import 'package:pray_quiet/domain/service/service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationService {
   static Future<Position> determinePosition() async {
@@ -35,11 +37,17 @@ class LocationService {
 
 //
   static Future<String> getAddress() async {
-    try {
-      final Position l = await Geolocator.getCurrentPosition();
+    LoggingService logger = LoggingService();
 
-      List<Placemark> placemarks =
-          await placemarkFromCoordinates(l.latitude, l.longitude);
+    try {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      final str = pref.getString('position') ??
+          '{"lat":"6.5244","lng":"3.3792","mock":"true"}';
+
+      // logger.info("Position $str ");
+      final l = p.Position.fromRawJson(str);
+
+      List<Placemark> placemarks = await placemarkFromCoordinates(l.lat, l.lng);
 
       Placemark validPlacemark = placemarks.firstWhere(
         (placemark) => placemark.locality != null && placemark.locality != '',
@@ -48,7 +56,8 @@ class LocationService {
 
       return validPlacemark.locality ?? 'Lagos';
     } catch (e) {
-      rethrow;
+      logger.error('(getAddress) an error occured $e');
+      return 'Lagos';
     }
   }
 //

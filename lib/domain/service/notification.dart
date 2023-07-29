@@ -14,42 +14,6 @@ class NotificationService {
     tz.initializeTimeZones();
   }
 
-  void startDailyNotificationScheduling() {
-    scheduleNotification();
-    final now = DateTime.now();
-    final tomorrow = DateTime(now.year, now.month, now.day + 1);
-    final duration = tomorrow.difference(now);
-
-    Timer.periodic(duration, (_) {
-      scheduleNotification();
-    });
-  }
-
-  Future<void> scheduleNotification() async {
-    final LoggingService logger = LoggingService();
-
-    final now = DateTime.now();
-
-    final Map<String, dynamic>? prayerDataInfo =
-        await PrayerTimeService.getAllPrayerTime(isDebug: false);
-    if (prayerDataInfo != null) {
-      final date = DateService().getApisToday();
-      final prayers = prayerDataInfo[date];
-      prayers.remove('Sunrise');
-
-      await scheduleNotificationsForDay(now, prayers);
-      logger.info("Notification scheduled for today");
-
-      final tomorrow = now.add(const Duration(days: 1));
-
-      final dateTomorrow = DateService().getApisTomorrow();
-      final nextDayPrayers = prayerDataInfo[dateTomorrow];
-
-      await scheduleNotificationsForDay(tomorrow, nextDayPrayers);
-      logger.info("Notification scheduled for tomorrow");
-    }
-  }
-
   Future<void> scheduleNotificationsForDay(
       DateTime day, Map<String, dynamic> prayers) async {
     Duration offsetTime = day.timeZoneOffset;

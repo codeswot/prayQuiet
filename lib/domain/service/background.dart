@@ -32,7 +32,9 @@ class BackgroundTaskScheduleService {
       taskId,
       isPrayerTime ? vmBackgroundServiceEnable : vmBackgroundServiceDisable,
       rescheduleOnReboot: true,
+      allowWhileIdle: true,
       exact: true,
+      wakeup: false,
     );
 
     // Schedule the periodic alarm starting from the next day
@@ -42,7 +44,9 @@ class BackgroundTaskScheduleService {
       isPrayerTime ? vmBackgroundServiceEnable : vmBackgroundServiceDisable,
       startAt: startTime.add(const Duration(days: 1)),
       rescheduleOnReboot: true,
+      allowWhileIdle: true,
       exact: true,
+      wakeup: false,
     );
   }
 
