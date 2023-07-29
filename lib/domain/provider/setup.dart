@@ -1,7 +1,9 @@
 import 'package:do_not_disturb/do_not_disturb.dart';
+import 'package:flutter/services.dart';
 import 'package:pray_quiet/data/position.dart';
 import 'package:pray_quiet/domain/provider/shared_pref.dart';
 import 'package:pray_quiet/domain/service/service.dart';
+import 'package:pray_quiet/presentation/style/colors.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 part 'setup.g.dart';
@@ -24,8 +26,20 @@ class Setup extends _$Setup {
         logger.info("is-setup-complete is $value");
         setupComplete = value ? SetupState.complete : SetupState.notStarted;
         if (setupComplete != null) {
+          SystemChrome.setSystemUIOverlayStyle(
+            const SystemUiOverlayStyle(
+              systemNavigationBarColor: AppColors.carmyGreen,
+            ),
+          );
           return setupComplete!;
+        } else {
+          SystemChrome.setSystemUIOverlayStyle(
+            const SystemUiOverlayStyle(
+              systemNavigationBarColor: AppColors.introG,
+            ),
+          );
         }
+        return SetupState.inProgress;
       }
       return SetupState.notStarted;
     } catch (e) {
@@ -54,6 +68,7 @@ class Setup extends _$Setup {
           logger.info("Set is-setup-complete to true"),
         },
       );
+
       state = SetupState.complete;
     } catch (e) {
       state = SetupState.notStarted;

@@ -6,7 +6,7 @@ part of 'prayer.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$prayerHash() => r'0eaa7930d7271f1c02dc6f2053da8ee6865d9255';
+String _$prayerHash() => r'b814e5a452989ef500170c58e7eaaa8f963cbc20';
 
 /// See also [Prayer].
 @ProviderFor(Prayer)
