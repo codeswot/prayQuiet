@@ -21,7 +21,10 @@ class CurrentPrayer extends StatelessWidget {
             return const SizedBox();
           }
           return Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              const Spacer(flex: 10000),
               StreamBuilder<PrayerInfo?>(
                 stream: PrayerTimeService.getCurrentOrNextPrayerStream(
                     dailyPrayers),
@@ -70,6 +73,7 @@ class CurrentPrayer extends StatelessWidget {
                   );
                 },
               ),
+              const Spacer(),
               Animate(
                 effects: const [
                   FadeEffect(
