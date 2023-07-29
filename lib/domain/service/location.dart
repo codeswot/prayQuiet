@@ -40,6 +40,8 @@ class LocationService {
   static Future<String> getAddress() async {
     LoggingService logger = LoggingService();
     final tzn = await TimeZone().getTimeZoneName();
+
+    logger.info('(getAddress) tzn ${tzn.split('/')[1]}');
     try {
       SharedPreferences pref = await SharedPreferences.getInstance();
       final str = pref.getString('position') ??
