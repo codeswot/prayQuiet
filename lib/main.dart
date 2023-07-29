@@ -7,30 +7,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:pray_quiet/data/position.dart';
 import 'package:pray_quiet/domain/provider/setup.dart';
 import 'package:pray_quiet/domain/service/service.dart';
 import 'package:pray_quiet/presentation/screen/screen.dart';
 import 'package:pray_quiet/presentation/style/colors.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-@pragma('vm:entry-point')
-void bgServe() async {
-  final LoggingService logger = LoggingService();
-  SharedPreferences pref = await SharedPreferences.getInstance();
-  final now = DateTime.now();
-  final isReady = pref.getBool('is-setup-complete') ?? false;
-  if (isReady) {
-    final g = await LocationService.determinePosition();
-
-    Position pos = Position(lat: g.latitude, lng: g.longitude, mock: false);
-
-    pref.setString('position', pos.toRawJson());
-
-    logger.debug('I got called at ${now.toIso8601String()}');
-  }
-}
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -41,16 +22,6 @@ void main() async {
   if (Platform.isAndroid) {
     await AndroidAlarmManager.initialize();
   }
-
-  AndroidAlarmManager.periodic(
-    const Duration(hours: 10),
-    3,
-    bgServe,
-    rescheduleOnReboot: true,
-    allowWhileIdle: true,
-    exact: true,
-    wakeup: true,
-  );
 
   runApp(
     const ProviderScope(

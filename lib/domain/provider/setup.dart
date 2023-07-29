@@ -1,9 +1,11 @@
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:do_not_disturb/do_not_disturb.dart';
 import 'package:flutter/services.dart';
 import 'package:pray_quiet/data/position.dart';
 import 'package:pray_quiet/domain/provider/shared_pref.dart';
 import 'package:pray_quiet/domain/service/service.dart';
 import 'package:pray_quiet/presentation/style/colors.dart';
+import 'package:pray_quiet/vm_background.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 part 'setup.g.dart';
@@ -68,7 +70,15 @@ class Setup extends _$Setup {
           logger.info("Set is-setup-complete to true"),
         },
       );
-
+      AndroidAlarmManager.periodic(
+        const Duration(hours: 20),
+        3,
+        bgServe,
+        rescheduleOnReboot: true,
+        allowWhileIdle: true,
+        exact: true,
+        wakeup: true,
+      );
       state = SetupState.complete;
     } catch (e) {
       state = SetupState.notStarted;
