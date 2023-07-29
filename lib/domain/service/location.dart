@@ -2,6 +2,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pray_quiet/data/position.dart' as p;
 import 'package:pray_quiet/domain/service/service.dart';
+import 'package:pray_quiet/domain/service/timezone.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationService {
@@ -38,7 +39,7 @@ class LocationService {
 //
   static Future<String> getAddress() async {
     LoggingService logger = LoggingService();
-
+    final tzn = await TimeZone().getTimeZoneName();
     try {
       SharedPreferences pref = await SharedPreferences.getInstance();
       final str = pref.getString('position') ??
@@ -54,10 +55,10 @@ class LocationService {
         orElse: () => placemarks.first,
       );
 
-      return validPlacemark.locality ?? 'Lagos';
+      return validPlacemark.locality ?? tzn.split('/')[1];
     } catch (e) {
       logger.error('(getAddress) an error occured $e');
-      return 'Lagos';
+      return tzn.split('/')[1];
     }
   }
 //
