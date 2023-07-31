@@ -57,8 +57,14 @@ class Settings extends _$Settings {
 
           if (useCustom) {
             final prayerJson = pref.value!.getString('custom_prayers') ?? '[]';
-            final t = json.decode(prayerJson);
-            dailyPrayers = t.map((e) => PrayerInfo.fromRawJson(e)).toList();
+
+            final List<dynamic> t = json.decode(prayerJson);
+
+            final cDailyPrayers =
+                t.map((e) => PrayerInfo.fromRawJson(e)).toList();
+
+            dailyPrayers = cDailyPrayers;
+            //
           } else {
             dailyPrayers = await PrayerTimeService.fetchDailyPrayerTime();
             final prayersJson =

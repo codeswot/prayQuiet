@@ -74,7 +74,8 @@ class _PrayerSettingsState extends ConsumerState<PrayerSettings> {
                                   context.showAppDialog(
                                     const AppDialog(
                                       title: 'Custom prayer time',
-                                      description: '',
+                                      description:
+                                          'By enabling this option, you can input the specific prayer times observed at your masjid, allowing the app to align with your local community\'s prayer schedule. By toggling this option, you ensure that the app accurately reflects the prayer times practiced at your masjid, enhancing your prayer experience and spiritual connection.',
                                     ),
                                   );
                                 },
@@ -89,9 +90,12 @@ class _PrayerSettingsState extends ConsumerState<PrayerSettings> {
                         ),
                         Switch.adaptive(
                           value: settingRef.useCustom ?? false,
-                          onChanged: (v) {
-                            settingRef.toggleUseCustom(v);
-                            setState(() {});
+                          onChanged: (v) async {
+                            bool enabled = await serviceFirstInterceptor(
+                              context,
+                              settingRef.serviceEnable ?? false,
+                            );
+                            if (enabled) {}
                           },
                         ),
                       ],
@@ -143,20 +147,31 @@ class _PrayerSettingsState extends ConsumerState<PrayerSettings> {
                                         width: 50.w,
                                         child: TextButton(
                                           onPressed: () async {
-                                            final d = await context
-                                                .showAppTimePicker();
-                                            if (d == null) {
-                                              return;
-                                            }
-                                            final updatedPrayer = _updateTime(
-                                              prayers: prayerRef.prayers,
-                                              prayer: prayer,
-                                              timeOfDay: d,
+                                            bool enabled =
+                                                await serviceFirstInterceptor(
+                                              context,
+                                              settingRef.serviceEnable ?? false,
                                             );
+                                            if (enabled) {
+                                              if (context.mounted) {
+                                                final d = await context
+                                                    .showAppTimePicker();
+                                                if (d == null) {
+                                                  return;
+                                                }
+                                                final updatedPrayer =
+                                                    _updateTime(
+                                                  prayers: prayerRef.prayers,
+                                                  prayer: prayer,
+                                                  timeOfDay: d,
+                                                );
 
-                                            settingRef.updateCustomPrayerTime(
-                                                updatedPrayer);
-                                            setState(() {});
+                                                settingRef
+                                                    .updateCustomPrayerTime(
+                                                        updatedPrayer);
+                                                setState(() {});
+                                              }
+                                            }
 
                                             //
                                           },
