@@ -73,11 +73,11 @@ class _CustomSliverAppBarState extends State<CustomSliverAppBar> {
                         AppAssets.bg,
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        height: 300.h,
+                        height: 250.h,
                       )
                     : const SizedBox(),
                 Container(
-                  height: widget.isHome ? 300.h : 150.h,
+                  height: widget.isHome ? 250.h : 150.h,
                   color: AppColors.primary.withOpacity(0.4),
                 ),
                 Padding(

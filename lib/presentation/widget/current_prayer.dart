@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pray_quiet/data/prayer_info_model.dart';
 import 'package:pray_quiet/domain/provider/prayer.dart';
 import 'package:pray_quiet/domain/service/service.dart';
@@ -44,7 +45,7 @@ class CurrentPrayer extends StatelessWidget {
                       Text(
                         nextPrayer.prayerName,
                         style: AppTypography.m3TitlelLarge(
-                          fontSize: 40,
+                          fontSize: 40.sp,
                         ),
                       ),
                       Text(
@@ -54,7 +55,7 @@ class CurrentPrayer extends StatelessWidget {
                         ),
                         style: AppTypography.m3TitlelMedium(),
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16.h),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -81,15 +82,29 @@ class CurrentPrayer extends StatelessWidget {
               child: FutureBuilder<String>(
                   future: LocationService.getAddress(),
                   builder: (context, snapshot) {
-                    return SizedBox(
-                      width: 150,
-                      child: Text(
-                        snapshot.data ?? '--',
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        textAlign: TextAlign.end,
-                        style: AppTypography.m3BodylLarge(),
-                      ),
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        SizedBox(
+                          width: 150.w,
+                          child: Text(
+                            snapshot.data ?? '--',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            textAlign: TextAlign.end,
+                            style: AppTypography.m3BodylLarge(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 8.h),
+                        Text(
+                          "${DateService.getFormartedHijriDate(
+                            dailyPrayers.first.prayerDateTime,
+                          )} AH",
+                          style: AppTypography.m3BodylMedium(),
+                        )
+                      ],
                     );
                   }),
             ),
