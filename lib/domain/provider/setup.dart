@@ -15,19 +15,18 @@ part 'setup.g.dart';
 @Riverpod(keepAlive: true)
 class Setup extends _$Setup {
   SetupState? setupComplete;
-
+  final LoggingService _logger = LoggingService();
   @override
   SetupState build() {
-    LoggingService logger = LoggingService();
     try {
-      logger.info("Setup provider building.");
+      _logger.info("Setup provider building.");
       AsyncValue<SharedPreferences> pref =
           ref.watch(getSharedPreferencesProvider);
       if (pref.hasValue) {
-        logger.info(
+        _logger.info(
             "Attempting to fetch if setup is completed from shared preferences.");
         final bool value = pref.value!.getBool("is-setup-complete") ?? false;
-        logger.info("is-setup-complete is $value");
+        _logger.info("is-setup-complete is $value");
         setupComplete = value ? SetupState.complete : SetupState.notStarted;
         if (setupComplete != null) {
           SystemChrome.setSystemUIOverlayStyle(
@@ -47,17 +46,16 @@ class Setup extends _$Setup {
       }
       return SetupState.notStarted;
     } catch (e) {
-      logger.error('Error occured building setup');
+      _logger.error('Error occured building setup $e');
       return SetupState.notStarted;
     }
   }
 
   Future<void> attemptSetup() async {
     try {
-      LoggingService logger = LoggingService();
       AsyncValue<SharedPreferences> pref =
           ref.watch(getSharedPreferencesProvider);
-      logger.info("Attempting complete setup ...");
+      _logger.info("Attempting complete setup ...");
       state = SetupState.inProgress;
 
       await NotificationService().requestPermissions();
@@ -76,10 +74,13 @@ class Setup extends _$Setup {
       pref.whenData(
         (repo) => {
           repo.setBool("is-setup-complete", true),
+          repo.setBool("use_custom", false),
+          //
           repo.setString('prayers', dailyPrayersJson),
           repo.setString('custom_prayers', dailyPrayersJson),
+          //
           repo.setString('position', pos.toRawJson()),
-          logger.info("Set is-setup-complete to true"),
+          _logger.info("Set is-setup-complete to true"),
         },
       );
 
@@ -95,13 +96,11 @@ class Setup extends _$Setup {
       state = SetupState.complete;
     } catch (e) {
       state = SetupState.notStarted;
-      rethrow;
+      _logger.error('(attemptSetup) An error occured attempting setup $e');
     }
   }
 
   void removeSetup() {
-    LoggingService logger = LoggingService();
-
     AsyncValue<SharedPreferences> pref =
         ref.watch(getSharedPreferencesProvider);
 
@@ -109,7 +108,7 @@ class Setup extends _$Setup {
       (repo) async => {
         repo.setBool("is-setup-complete", false),
         repo.remove('position'),
-        logger.info("is-setup-complete to false"),
+        _logger.info("is-setup-complete to false"),
         state = SetupState.notStarted
       },
     );

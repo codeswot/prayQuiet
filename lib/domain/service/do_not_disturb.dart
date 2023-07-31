@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:do_not_disturb/do_not_disturb.dart';
+import 'package:pray_quiet/data/prayer_info_model.dart';
 import 'package:pray_quiet/domain/service/service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sound_mode/sound_mode.dart';
@@ -9,13 +12,26 @@ class DoNotDisturbService {
   final DoNotDisturb _doNotDisturb = DoNotDisturb();
   Future<void> enable() async {
     try {
-      await _doNotDisturb.setStatus(false);
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      final useCustom = pref.getBool('use_custom') ?? false;
 
-      final prayers = await PrayerTimeService.fetchDailyPrayerTime();
+      final List<PrayerInfo> dailyPrayers;
+
+      if (useCustom) {
+        final prayerJson = pref.getString('custom_prayers') ?? '[]';
+        final t = json.decode(prayerJson);
+        dailyPrayers = t.map((e) => PrayerInfo.fromRawJson(e)).toList();
+      } else {
+        final prayerJson = pref.getString('prayers') ?? '[]';
+        final t = json.decode(prayerJson);
+        dailyPrayers = t.map((e) => PrayerInfo.fromRawJson(e)).toList();
+      }
+
+      await _doNotDisturb.setStatus(false);
 
       _logger.info("Attempting to enable or disable DoNotDisturb");
 
-      for (final prayer in prayers) {
+      for (final prayer in dailyPrayers) {
         final res = await NotificationService().showNotification(
           prayerName: prayer.prayerName,
           isEnabling: true,

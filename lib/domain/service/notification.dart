@@ -36,7 +36,7 @@ class NotificationService {
       await flutterLocalNotificationsPlugin.show(
         3,
         isEnabling
-            ? "$prayerName at $prayerTime"
+            ? "Time for prayer"
             : "Assalamualaikum Warahmatullahi 🤲🏽",
         isEnabling
             ? 'Putting device on total silence 🤫'

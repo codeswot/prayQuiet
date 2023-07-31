@@ -105,9 +105,9 @@ class _PrayerSettingsState extends ConsumerState<PrayerSettings> {
                         child: ListView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: prayerRef.prayers?.length,
+                          itemCount: prayerRef.prayers.length,
                           itemBuilder: (ctx, idx) {
-                            final PrayerInfo prayer = prayerRef.prayers![idx];
+                            final PrayerInfo prayer = prayerRef.prayers[idx];
                             return Padding(
                               padding: EdgeInsets.only(bottom: 3.h),
                               child: GestureDetector(
@@ -149,7 +149,7 @@ class _PrayerSettingsState extends ConsumerState<PrayerSettings> {
                                               return;
                                             }
                                             final updatedPrayer = _updateTime(
-                                              prayers: prayerRef.prayers ?? [],
+                                              prayers: prayerRef.prayers,
                                               prayer: prayer,
                                               timeOfDay: d,
                                             );

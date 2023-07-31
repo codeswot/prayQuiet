@@ -11,44 +11,44 @@ part 'prayer.g.dart';
 
 @Riverpod(keepAlive: true)
 class Prayer extends _$Prayer {
-  List<PrayerInfo>? prayers;
+  List<PrayerInfo> prayers = [];
+  List<PrayerInfo> customPrayers = [];
   bool? isLoading;
+  final LoggingService _logger = LoggingService();
+
   @override
-  Future<List<PrayerInfo>?> build() async {
+  List<PrayerInfo> build() {
     isLoading = true;
-    LoggingService logger = LoggingService();
     try {
-      logger.info("prayer provider building.");
+      _logger.info("prayer provider building.");
       AsyncValue<SharedPreferences> pref =
           ref.watch(getSharedPreferencesProvider);
 
       final bool isUseCustom = pref.value!.getBool("use_custom") ?? false;
-      List<PrayerInfo> dailyPrayers;
-      final v = pref.value!.getString('custom_prayers') ?? '[]';
 
-      final List<dynamic> t = json.decode(v);
+      List<PrayerInfo> dailyPrayers;
+      String prayerJson;
+      List<dynamic> t;
+
       if (isUseCustom) {
+        prayerJson = pref.value!.getString('custom_prayers') ?? '[]';
+        t = json.decode(prayerJson);
         dailyPrayers = t.map((e) => PrayerInfo.fromRawJson(e)).toList();
       } else {
-        dailyPrayers = await PrayerTimeService.fetchDailyPrayerTime();
+        prayerJson = pref.value!.getString('prayers') ?? '[]';
+        t = json.decode(prayerJson);
+        dailyPrayers = t.map((e) => PrayerInfo.fromRawJson(e)).toList();
       }
 
       if (pref.hasValue) {
-        logger.info("Attempting to fetch prayers.");
+        _logger.info("Attempting to fetch prayers.");
 
         final int intervalIdx = pref.value!.getInt("interval_type") ?? 1;
 
         final interval = AfterPrayerIntervalType.values[intervalIdx];
 
-        logger.info(" ${isUseCustom ? 'Custom prayers' : 'prayers'} fetched");
+        _logger.info(" ${isUseCustom ? 'Custom prayers' : 'prayers'} fetched");
         //enable service
-
-        if (t.isEmpty) {
-          final customPrayers =
-              json.encode(dailyPrayers.map((e) => e.toRawJson()).toList());
-          pref.value!.setString('custom_prayers', customPrayers);
-        }
-
         final serviceEnabled = pref.value!.getBool('enable_service') ?? true;
         if (serviceEnabled) {
           BackgroundTaskScheduleService().toggle(
@@ -66,33 +66,35 @@ class Prayer extends _$Prayer {
 
       return dailyPrayers;
     } catch (e) {
-      logger.error('An error occured building prayers $e');
+      _logger.error('An error occured building prayers $e');
     }
-    return null;
+    return [];
   }
 
   Future<void> updatePrayer() async {
     try {
-      isLoading = true;
+      AsyncValue<SharedPreferences> pref =
+          ref.watch(getSharedPreferencesProvider);
 
-      LoggingService logger = LoggingService();
+      final useCustom = pref.value!.getBool('use_custom') ?? true;
+      if (useCustom) {
+        return;
+      }
+      isLoading = true;
 
       final l = await LocationService.determinePosition();
 
       final dailyPrayers =
           await PrayerTimeService.fetchDailyPrayerTime(location: l);
 
-      AsyncValue<SharedPreferences> pref =
-          ref.watch(getSharedPreferencesProvider);
-      logger.info("Attempting to update prayer time ...");
+      _logger.info("Attempting to update prayer time ...");
 
       final int intervalIdx = pref.value!.getInt("interval_type") ?? 1;
 
       final interval = AfterPrayerIntervalType.values[intervalIdx];
 
       pref.whenData((repo) {
-        logger.info("Prayer time updated");
-
+        _logger.info("Prayer time updated");
         isLoading = false;
         final serviceEnabled = pref.value!.getBool('enable_service') ?? true;
         if (serviceEnabled) {
@@ -102,24 +104,40 @@ class Prayer extends _$Prayer {
             isEnabling: true,
           );
         }
+        //save to DB
         prayers = dailyPrayers;
       });
     } catch (e) {
       isLoading = false;
-      rethrow;
+      _logger.error('An error occured updating prayer $e');
     }
   }
 
   setCustom(List<PrayerInfo> customPrayers) {
     final LoggingService logger = LoggingService();
     try {
+      AsyncValue<SharedPreferences> pref =
+          ref.watch(getSharedPreferencesProvider);
       isLoading = true;
+
+      final int intervalIdx = pref.value!.getInt("interval_type") ?? 1;
+
+      final interval = AfterPrayerIntervalType.values[intervalIdx];
+
       prayers = customPrayers;
       isLoading = false;
+      final serviceEnabled = pref.value!.getBool('enable_service') ?? true;
+      if (serviceEnabled) {
+        BackgroundTaskScheduleService().toggle(
+          prayers: customPrayers,
+          afterPrayerInterval: interval,
+          isEnabling: true,
+        );
+      }
       logger.info('Custom prayer set');
     } catch (e) {
       isLoading = false;
-      logger.error('An error occured');
+      logger.error('An error occured setting custom prayer $e');
     }
   }
 }

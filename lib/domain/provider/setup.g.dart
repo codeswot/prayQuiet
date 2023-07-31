@@ -6,7 +6,7 @@ part of 'setup.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$setupHash() => r'38bed635e28edf5f9fa7b2d831de3ffa41ae9ad3';
+String _$setupHash() => r'00a83e6f68121ff3755e4530b1ef34eb00830237';
 
 /// See also [Setup].
 @ProviderFor(Setup)
@@ -20,4 +20,5 @@ final setupProvider = NotifierProvider<Setup, SetupState>.internal(
 );
 
 typedef _$Setup = Notifier<SetupState>;
-// ignore_for_file: unnecessary_raw_strings, subtype_of_sealed_class, invalid_use_of_internal_member, do_not_use_environment, prefer_const_constructors, public_member_api_docs, avoid_private_typedef_functions
+// ignore_for_file: type=lint
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member
