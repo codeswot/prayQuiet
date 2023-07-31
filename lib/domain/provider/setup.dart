@@ -75,7 +75,6 @@ class Setup extends _$Setup {
         3,
         bgServe,
         rescheduleOnReboot: true,
-        allowWhileIdle: true,
         exact: true,
         wakeup: true,
       );

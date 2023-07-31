@@ -44,7 +44,8 @@ class DailyPrayerList extends StatelessWidget {
               children: dailyPrayers.map((dailyPrayer) {
                 return DailyPrayerTile(
                   title: dailyPrayer.prayerName,
-                  time: DateService.getFormartedTime12(dailyPrayer.dateTime),
+                  time: DateService.getFormartedTime12(
+                      dailyPrayer.prayerDateTime),
                   currentPrayer: currentPrayer ?? 'Fajr',
                 );
               }).toList(),

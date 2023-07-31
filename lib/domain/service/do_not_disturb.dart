@@ -19,7 +19,7 @@ class DoNotDisturbService {
         final res = await NotificationService().showNotification(
           prayerName: prayer.prayerName,
           isEnabling: true,
-          prayerTime: DateService.getFormartedTime12(prayer.dateTime),
+          prayerTime: DateService.getFormartedTime12(prayer.prayerDateTime),
         );
         if (res) {
           //|| !res

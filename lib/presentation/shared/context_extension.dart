@@ -28,6 +28,12 @@ extension ContextExtensions on BuildContext {
         context: this,
         builder: (context) => dialog,
       );
+  Future<TimeOfDay?> showAppTimePicker() async {
+    return showTimePicker(
+      context: this,
+      initialTime: TimeOfDay.now(),
+    );
+  }
 
   Future<T?> showBottomSheet<T>(Widget sheet) => showModalBottomSheet<T>(
         useRootNavigator: true,

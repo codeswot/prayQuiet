@@ -1,5 +1,6 @@
 import 'package:hijri/hijri_calendar.dart';
 import 'package:intl/intl.dart';
+import 'package:pray_quiet/domain/service/service.dart';
 
 class DateService {
   DateTime now = DateTime.now();
@@ -67,6 +68,7 @@ class DateService {
 
   static DateTime getFormartedDateWitCustomTime(
       {required DateTime date, required String customTime}) {
+    final LoggingService logger = LoggingService();
     try {
       final day = getFormartedDay(date);
       final month = getFormartedMonth(date);
@@ -74,9 +76,10 @@ class DateService {
 
       final DateTime parsedTime =
           DateTime.parse("$year-$month-$day $customTime");
-
+      logger.info('parsed Date is $parsedTime');
       return parsedTime;
     } catch (e) {
+      logger.error('an error occured getFormartedDateWitCustomTime $e');
       rethrow;
     }
   }

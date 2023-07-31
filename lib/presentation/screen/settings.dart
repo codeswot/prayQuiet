@@ -3,6 +3,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pray_quiet/domain/provider/settings.dart';
+import 'package:pray_quiet/presentation/screen/prayer_settings.dart';
+import 'package:pray_quiet/presentation/shared/context_extension.dart';
 
 import 'package:pray_quiet/presentation/style/style.dart';
 import 'package:pray_quiet/presentation/widget/widget.dart';
@@ -77,7 +79,7 @@ class _SettingsState extends State<Settings> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Edit Prayer Time (coming soon)',
+                              'Prayer Time Settings',
                               style: AppTypography.m3BodylLarge(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -88,13 +90,12 @@ class _SettingsState extends State<Settings> {
                                   AppColors.primary.withOpacity(0.2),
                               child: IconButton(
                                 padding: EdgeInsets.zero,
-                                icon: Icon(
+                                icon: const Icon(
                                   Icons.arrow_forward,
-                                  color: AppColors.text.withOpacity(0.4),
-
-                                  // AppColors.aleGreen,
+                                  color: AppColors.aleGreen,
                                 ),
-                                onPressed: null,
+                                onPressed: () =>
+                                    context.push(const PrayerSettings()),
                               ),
                             ),
                           ],

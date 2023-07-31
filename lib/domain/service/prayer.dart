@@ -14,7 +14,7 @@ class PrayerTimeService {
           '{"lat":"6.5244","lng":"3.3792","mock":"true"}';
       late p.Position pos;
       if (l != null) {
-        p.Position(lat: l.latitude, lng: l.longitude, mock: false);
+        pos = p.Position(lat: l.latitude, lng: l.longitude, mock: false);
       } else {
         pos = p.Position.fromRawJson(value);
       }
@@ -73,12 +73,12 @@ class PrayerTimeService {
     PrayerInfo? nextPrayer;
 
     for (final prayer in prayers) {
-      if (now.isBefore(prayer.dateTime) ||
-          now.isAtSameMomentAs(prayer.dateTime)) {
+      if (now.isBefore(prayer.prayerDateTime) ||
+          now.isAtSameMomentAs(prayer.prayerDateTime)) {
         // If the current time is before or at the same time as the next prayer, return it.
         return prayer;
-      } else if (now.isAfter(prayer.dateTime)) {
-        final difference = now.difference(prayer.dateTime);
+      } else if (now.isAfter(prayer.prayerDateTime)) {
+        final difference = now.difference(prayer.prayerDateTime);
         if (difference.inMinutes <= 10) {
           // If the current time is within 10 minutes after the prayer, return it.
           return prayer;

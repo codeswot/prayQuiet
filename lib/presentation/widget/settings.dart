@@ -96,62 +96,64 @@ class _AfterPrayerBehaviourState extends State<AfterPrayerBehaviour> {
             ),
           ],
         ),
-        Consumer(builder: (context, ref, _) {
-          final settings = ref.watch(settingsProvider.notifier);
+        Consumer(
+          builder: (context, ref, _) {
+            final settings = ref.watch(settingsProvider.notifier);
 
-          return ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: AfterPrayerBehaviourType.values.length,
-            itemBuilder: (ctx, idx) {
-              final item = AfterPrayerBehaviourType.values[idx];
-              return Padding(
-                padding: EdgeInsets.only(bottom: 3.h),
-                child: GestureDetector(
-                  onTap: () async {
-                    bool enabled = await serviceFirstInterceptor(
-                      context,
-                      settings.serviceEnable ?? false,
-                    );
-                    if (enabled) {
-                      settings.setbehaviourType(item.index);
-                      setState(() {});
-                    }
-                  },
-                  child: SettingsItemContainer(
-                    child: Row(
-                      children: [
-                        Icon(
-                          _buildBehaviourIcon(item),
-                          size: 13.sp,
-                        ),
-                        SizedBox(width: 8.w),
-                        Text(
-                          'Put Device on ${item.name}',
-                        ),
-                        const Spacer(),
-                        Radio.adaptive(
-                          value: item.index,
-                          groupValue: settings.behaviourType,
-                          onChanged: (v) async {
-                            bool enabled = await serviceFirstInterceptor(
-                              context,
-                              settings.serviceEnable ?? false,
-                            );
-                            if (enabled) {
-                              settings.setbehaviourType(v ?? item.index);
-                              setState(() {});
-                            }
-                          },
-                        )
-                      ],
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: AfterPrayerBehaviourType.values.length,
+              itemBuilder: (ctx, idx) {
+                final item = AfterPrayerBehaviourType.values[idx];
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 3.h),
+                  child: GestureDetector(
+                    onTap: () async {
+                      bool enabled = await serviceFirstInterceptor(
+                        context,
+                        settings.serviceEnable ?? false,
+                      );
+                      if (enabled) {
+                        settings.setbehaviourType(item.index);
+                        setState(() {});
+                      }
+                    },
+                    child: SettingsItemContainer(
+                      child: Row(
+                        children: [
+                          Icon(
+                            _buildBehaviourIcon(item),
+                            size: 13.sp,
+                          ),
+                          SizedBox(width: 8.w),
+                          Text(
+                            'Put Device on ${item.name}',
+                          ),
+                          const Spacer(),
+                          Radio.adaptive(
+                            value: item.index,
+                            groupValue: settings.behaviourType,
+                            onChanged: (v) async {
+                              bool enabled = await serviceFirstInterceptor(
+                                context,
+                                settings.serviceEnable ?? false,
+                              );
+                              if (enabled) {
+                                settings.setbehaviourType(v ?? item.index);
+                                setState(() {});
+                              }
+                            },
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
-          );
-        }),
+                );
+              },
+            );
+          },
+        ),
       ],
     );
   }

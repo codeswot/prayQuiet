@@ -53,7 +53,8 @@ class CurrentPrayer extends StatelessWidget {
                         ),
                         Text(
                           DateService.fmt12Hr(
-                            DateService.getFormartedTime(nextPrayer.dateTime),
+                            DateService.getFormartedTime(
+                                nextPrayer.prayerDateTime),
                           ),
                           style: AppTypography.m3TitlelMedium(),
                         ),
@@ -63,7 +64,7 @@ class CurrentPrayer extends StatelessWidget {
                           children: [
                             Text(
                               DateService.getcountDownOrNow(
-                                  nextPrayer.dateTime),
+                                  nextPrayer.prayerDateTime),
                               style: AppTypography.m3BodylLarge(),
                             ),
                           ],

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:pray_quiet/data/prayer_info_model.dart';
 import 'package:pray_quiet/domain/provider/settings.dart';
 import 'package:pray_quiet/domain/provider/shared_pref.dart';
@@ -15,38 +17,58 @@ class Prayer extends _$Prayer {
   Future<List<PrayerInfo>?> build() async {
     isLoading = true;
     LoggingService logger = LoggingService();
-    logger.info("prayer provider building.");
-    AsyncValue<SharedPreferences> pref =
-        ref.watch(getSharedPreferencesProvider);
+    try {
+      logger.info("prayer provider building.");
+      AsyncValue<SharedPreferences> pref =
+          ref.watch(getSharedPreferencesProvider);
 
-    final dailyPrayers = await PrayerTimeService.fetchDailyPrayerTime();
+      final bool isUseCustom = pref.value!.getBool("use_custom") ?? false;
+      List<PrayerInfo> dailyPrayers;
+      final v = pref.value!.getString('custom_prayers') ?? '[]';
 
-    if (pref.hasValue) {
-      logger.info("Attempting to fetch prayers.");
-
-      final int intervalIdx = pref.value!.getInt("interval_type") ?? 1;
-
-      final interval = AfterPrayerIntervalType.values[intervalIdx];
-
-      logger.info("prayers fetched is ${dailyPrayers.map((e) {
-        logger.info('$e');
-      })}");
-      //enable service
-      final serviceEnabled = pref.value!.getBool('enable_service') ?? true;
-      if (serviceEnabled) {
-        BackgroundTaskScheduleService().toggle(
-          prayers: dailyPrayers,
-          afterPrayerInterval: interval,
-          isEnabling: true,
-        );
+      final List<dynamic> t = json.decode(v);
+      if (isUseCustom) {
+        dailyPrayers = t.map((e) => PrayerInfo.fromRawJson(e)).toList();
+      } else {
+        dailyPrayers = await PrayerTimeService.fetchDailyPrayerTime();
       }
 
-      isLoading = false;
-    }
-    isLoading = false;
-    prayers = dailyPrayers;
+      if (pref.hasValue) {
+        logger.info("Attempting to fetch prayers.");
 
-    return dailyPrayers;
+        final int intervalIdx = pref.value!.getInt("interval_type") ?? 1;
+
+        final interval = AfterPrayerIntervalType.values[intervalIdx];
+
+        logger.info(" ${isUseCustom ? 'Custom prayers' : 'prayers'} fetched");
+        //enable service
+
+        if (t.isEmpty) {
+          final customPrayers =
+              json.encode(dailyPrayers.map((e) => e.toRawJson()).toList());
+          pref.value!.setString('custom_prayers', customPrayers);
+        }
+
+        final serviceEnabled = pref.value!.getBool('enable_service') ?? true;
+        if (serviceEnabled) {
+          BackgroundTaskScheduleService().toggle(
+            prayers: dailyPrayers,
+            afterPrayerInterval: interval,
+            isEnabling: true,
+          );
+        }
+
+        isLoading = false;
+      }
+      isLoading = false;
+
+      prayers = dailyPrayers;
+
+      return dailyPrayers;
+    } catch (e) {
+      logger.error('An error occured building prayers $e');
+    }
+    return null;
   }
 
   Future<void> updatePrayer() async {
@@ -84,6 +106,19 @@ class Prayer extends _$Prayer {
     } catch (e) {
       isLoading = false;
       rethrow;
+    }
+  }
+
+  setCustom(List<PrayerInfo> customPrayers) {
+    final LoggingService logger = LoggingService();
+    try {
+      isLoading = true;
+      prayers = customPrayers;
+      isLoading = false;
+      logger.info('Custom prayer set');
+    } catch (e) {
+      isLoading = false;
+      logger.error('An error occured');
     }
   }
 }

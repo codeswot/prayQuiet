@@ -43,7 +43,6 @@ class BackgroundTaskScheduleService {
       taskId + 1,
       isPrayerTime ? vmBackgroundServiceEnable : vmBackgroundServiceDisable,
       startAt: startTime.add(const Duration(days: 1)),
-      rescheduleOnReboot: true,
       allowWhileIdle: true,
       exact: true,
       wakeup: true,
@@ -56,27 +55,13 @@ class BackgroundTaskScheduleService {
     required AfterPrayerIntervalType afterPrayerInterval,
   }) async {
     try {
-      Duration duration = const Duration(minutes: 30);
-
-      switch (afterPrayerInterval) {
-        case AfterPrayerIntervalType.min15:
-          duration = const Duration(minutes: 15);
-          break;
-        case AfterPrayerIntervalType.min30:
-          duration = const Duration(minutes: 30);
-          break;
-        case AfterPrayerIntervalType.hr1:
-          duration = const Duration(hours: 1);
-          break;
-        default:
-          duration = const Duration(minutes: 15);
-      }
+      final Duration duration = _duration(afterPrayerInterval);
 
       for (final prayer in prayers) {
         final prayerTaskId = prayer.prayerName.hashCode;
         final afterPrayerTaskId = '${prayer.prayerName}-after'.hashCode;
 
-        final prayerTime = DateService.getFormartedTime(prayer.dateTime);
+        final prayerTime = DateService.getFormartedTime(prayer.prayerDateTime);
 
         if (isEnabling) {
           await _scheduleTask(
@@ -84,7 +69,7 @@ class BackgroundTaskScheduleService {
             taskId: prayerTaskId,
             isPrayerTime: true,
           );
-          final afterPrayerDate = prayer.dateTime.add(duration);
+          final afterPrayerDate = prayer.prayerDateTime.add(duration);
 
           final afterPrayerTime = DateService.getFormartedTime(afterPrayerDate);
 
@@ -95,14 +80,14 @@ class BackgroundTaskScheduleService {
           );
 
           _logger.info(
-            'All prayers schduled with : task Id as $prayerTaskId ${prayer.prayerName} at ${DateService.getFormartedTime12(prayer.dateTime)} with after interval ${duration.inMinutes} as $afterPrayerInterval',
+            'All prayers schduled with : task Id as $prayerTaskId ${prayer.prayerName} at ${DateService.getFormartedTime12(prayer.prayerDateTime)} with after interval ${duration.inMinutes} as $afterPrayerInterval',
           );
         } else {
           await _unScheduleTask(prayerTaskId);
           await _unScheduleTask(afterPrayerTaskId);
 
           _logger.info(
-            'All prayers unSchduled with : task Id as $prayerTaskId ${prayer.prayerName} at ${DateService.getFormartedTime12(prayer.dateTime)}',
+            'All prayers unSchduled with : task Id as $prayerTaskId ${prayer.prayerName} at ${DateService.getFormartedTime12(prayer.prayerDateTime)}',
           );
         }
       }
@@ -118,6 +103,28 @@ class BackgroundTaskScheduleService {
     } catch (e) {
       _logger.error(
           '[BackgroundTaskScheduleService] stop : Error starting background service $e');
+    }
+  }
+
+  Duration _duration(AfterPrayerIntervalType type) {
+    final LoggingService logger = LoggingService();
+    try {
+      switch (type) {
+        case AfterPrayerIntervalType.min15:
+          return const Duration(minutes: 15);
+
+        case AfterPrayerIntervalType.min30:
+          return const Duration(minutes: 30);
+
+        case AfterPrayerIntervalType.hr1:
+          return const Duration(hours: 1);
+
+        default:
+          return const Duration(minutes: 15);
+      }
+    } catch (e) {
+      logger.error('An error occured setting interval $e');
+      return const Duration(minutes: 15);
     }
   }
 }

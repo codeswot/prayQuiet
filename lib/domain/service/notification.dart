@@ -2,9 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:pray_quiet/domain/service/service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -12,70 +10,6 @@ class NotificationService {
 
   Future initializetimezone() async {
     tz.initializeTimeZones();
-  }
-
-  Future<void> scheduleNotificationsForDay(
-      DateTime day, Map<String, dynamic> prayers) async {
-    Duration offsetTime = day.timeZoneOffset;
-    final LoggingService logger = LoggingService();
-
-    for (final prayer in prayers.entries) {
-      final formattedPrayerTime = DateService.getFormartedDateWitCustomTime(
-        date: day,
-        customTime: prayer.value,
-      );
-
-      if (day.isBefore(formattedPrayerTime)) {
-        final uniqueId = DateTime.now().microsecondsSinceEpoch.hashCode +
-            formattedPrayerTime.millisecondsSinceEpoch.hashCode;
-
-        try {
-          await initializetimezone();
-          const androidChannel = AndroidNotificationDetails(
-            'PrayQuiet',
-            "Notifications",
-            importance: Importance.max,
-            priority: Priority.high,
-            playSound: true,
-            enableVibration: true,
-            enableLights: true,
-            ongoing: false,
-            visibility: NotificationVisibility.public,
-          );
-
-          var platfromChannel =
-              const NotificationDetails(android: androidChannel);
-
-          tz.TZDateTime zonedTime = tz.TZDateTime.local(
-            formattedPrayerTime.year,
-            formattedPrayerTime.month,
-            formattedPrayerTime.day,
-            formattedPrayerTime.hour,
-            formattedPrayerTime.minute,
-          ).subtract(offsetTime);
-
-          await flutterLocalNotificationsPlugin.zonedSchedule(
-            uniqueId,
-            'Prayer Time',
-            'It is time for ${prayer.key}',
-            zonedTime,
-            platfromChannel,
-            payload: prayer.key,
-            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-            uiLocalNotificationDateInterpretation:
-                UILocalNotificationDateInterpretation.absoluteTime,
-          );
-
-          logger.info(
-            "Notification scheduled for ${prayer.key} with id $uniqueId",
-          );
-          final SharedPreferences prefs = await SharedPreferences.getInstance();
-          await prefs.setInt(prayer.key, uniqueId);
-        } catch (e) {
-          rethrow;
-        }
-      }
-    }
   }
 
   Future<bool> showNotification({
