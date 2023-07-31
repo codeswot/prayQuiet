@@ -4,3 +4,4 @@ export 'settings.dart';
 export 'notifications.dart';
 export 'layout.dart';
 export 'intro.dart';
+export 'prayer_settings.dart';

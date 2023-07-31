@@ -1,12 +1,16 @@
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:pray_quiet/data/prayer_info_model.dart';
+import 'package:pray_quiet/domain/provider/settings.dart';
 import 'package:pray_quiet/domain/service/service.dart';
 import 'package:pray_quiet/vm_background.dart';
 
 class BackgroundTaskScheduleService {
+  final LoggingService _logger = LoggingService();
+
   Future<void> _scheduleTask({
     required String time,
     required int taskId,
-    required bool isEnabling,
+    required bool isPrayerTime,
   }) async {
     final now = DateTime.now();
 
@@ -26,8 +30,9 @@ class BackgroundTaskScheduleService {
     AndroidAlarmManager.oneShot(
       initialDelay,
       taskId,
-      isEnabling ? vmBackgroundServiceEnable : vmBackgroundServiceDisable,
+      isPrayerTime ? vmBackgroundServiceEnable : vmBackgroundServiceDisable,
       rescheduleOnReboot: true,
+      allowWhileIdle: true,
       exact: true,
       wakeup: true,
     );
@@ -36,62 +41,90 @@ class BackgroundTaskScheduleService {
     AndroidAlarmManager.periodic(
       const Duration(days: 1),
       taskId + 1,
-      isEnabling ? vmBackgroundServiceEnable : vmBackgroundServiceDisable,
+      isPrayerTime ? vmBackgroundServiceEnable : vmBackgroundServiceDisable,
       startAt: startTime.add(const Duration(days: 1)),
-      rescheduleOnReboot: true,
+      allowWhileIdle: true,
       exact: true,
       wakeup: true,
     );
   }
 
-  Future<void> start(Map<String, dynamic> prayers) async {
-    final LoggingService logger = LoggingService();
-
+  Future<void> toggle({
+    required List<PrayerInfo> prayers,
+    required bool isEnabling,
+    required AfterPrayerIntervalType afterPrayerInterval,
+  }) async {
     try {
-//       //test - start
-//       final res = await PrayerTimeService.getAllPrayerTime(isDebug: false);
-//       if (res == null) {
-//         logger.error('Res is null');
-//         return;
-//       }
-//       final dateService = DateService();
-//       final Map<String, dynamic> prayers = res[dateService.getApisToday()];
-// //test - end
-      prayers.remove('Sunrise');
-      for (final prayer in prayers.entries) {
-        final enableTaskId = prayer.key.hashCode;
+      final Duration duration = _duration(afterPrayerInterval);
 
-        await _scheduleTask(
-          time: prayer.value,
-          taskId: enableTaskId,
-          isEnabling: true,
-        );
-        final disableDoNotDisturbDate =
-            DateService.getFormartedDateWitCustomTime(
-          date: DateTime.now(),
-          customTime: prayer.value,
-        ).add(
-          const Duration(minutes: 20),
-        );
+      for (final prayer in prayers) {
+        final prayerTaskId = prayer.prayerName.hashCode;
+        final afterPrayerTaskId = '${prayer.prayerName}-after'.hashCode;
 
-        final disableDoNotDisturbTime =
-            DateService.getFormartedTime(disableDoNotDisturbDate);
+        final prayerTime = DateService.getFormartedTime(prayer.prayerDateTime);
 
-        final disableTaskId = '${prayer.key}-disable'.hashCode;
+        if (isEnabling) {
+          await _scheduleTask(
+            time: prayerTime,
+            taskId: prayerTaskId,
+            isPrayerTime: true,
+          );
+          final afterPrayerDate = prayer.prayerDateTime.add(duration);
 
-        await _scheduleTask(
-          time: disableDoNotDisturbTime,
-          taskId: disableTaskId,
-          isEnabling: false,
-        );
+          final afterPrayerTime = DateService.getFormartedTime(afterPrayerDate);
 
-        logger.info(
-          'All prayers schduled with : task Id as $enableTaskId ${prayer.key} at ${DateService.fmt12Hr(prayer.value)}',
-        );
+          await _scheduleTask(
+            time: afterPrayerTime,
+            taskId: afterPrayerTaskId,
+            isPrayerTime: false,
+          );
+
+          _logger.info(
+            'All prayers schduled with : task Id as $prayerTaskId ${prayer.prayerName} at ${DateService.getFormartedTime12(prayer.prayerDateTime)} with after interval ${duration.inMinutes} as $afterPrayerInterval',
+          );
+        } else {
+          await _unScheduleTask(prayerTaskId);
+          await _unScheduleTask(afterPrayerTaskId);
+
+          _logger.info(
+            'All prayers unSchduled with : task Id as $prayerTaskId ${prayer.prayerName} at ${DateService.getFormartedTime12(prayer.prayerDateTime)}',
+          );
+        }
       }
     } catch (e) {
-      logger.error(
-          '[BackgroundTaskScheduleService] : Error starting background service');
+      _logger.error(
+          '[BackgroundTaskScheduleService] start : Error starting background service $e');
+    }
+  }
+
+  Future<void> _unScheduleTask(int id) async {
+    try {
+      await AndroidAlarmManager.cancel(id);
+    } catch (e) {
+      _logger.error(
+          '[BackgroundTaskScheduleService] stop : Error starting background service $e');
+    }
+  }
+
+  Duration _duration(AfterPrayerIntervalType type) {
+    final LoggingService logger = LoggingService();
+    try {
+      switch (type) {
+        case AfterPrayerIntervalType.min15:
+          return const Duration(minutes: 15);
+
+        case AfterPrayerIntervalType.min30:
+          return const Duration(minutes: 30);
+
+        case AfterPrayerIntervalType.hr1:
+          return const Duration(hours: 1);
+
+        default:
+          return const Duration(minutes: 15);
+      }
+    } catch (e) {
+      logger.error('An error occured setting interval $e');
+      return const Duration(minutes: 15);
     }
   }
 }

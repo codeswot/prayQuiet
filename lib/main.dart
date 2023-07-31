@@ -1,7 +1,9 @@
-// ignore_for_file: depend_on_referenced_packages
+import 'dart:io';
 
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,21 +13,15 @@ import 'package:pray_quiet/presentation/screen/screen.dart';
 import 'package:pray_quiet/presentation/style/colors.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
-@pragma('vm:entry-point')
-void test() {
-  final LoggingService logger = LoggingService();
-  final now = DateTime.now();
-
-  logger.debug('I got called at ${now.toIso8601String()}');
-}
-
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   // Initialize services
   NotificationService().initializeNotifications();
-  await AndroidAlarmManager.initialize();
+  if (Platform.isAndroid) {
+    await AndroidAlarmManager.initialize();
+  }
 
   runApp(
     const ProviderScope(
@@ -54,33 +50,40 @@ class PrayQuietApp extends StatelessWidget {
             ),
             useMaterial3: true,
             textTheme: TextTheme(
-              labelLarge: TextStyle(fontSize: 45.sp),
-              bodyMedium: TextStyle(fontSize: 30.sp),
+              labelLarge: TextStyle(fontSize: 15.sp),
+              bodyMedium: TextStyle(fontSize: 14.sp),
             ),
             fontFamily: 'Nunito',
           ),
           home: Material(
             child: Consumer(
               builder: (context, ref, _) {
+                SystemChrome.setSystemUIOverlayStyle(
+                  const SystemUiOverlayStyle(
+                    systemNavigationBarColor: AppColors.carmyGreen,
+                  ),
+                );
                 final setup = ref.watch(setupProvider);
                 if (setup.isComplete) {
-                  return const Home();
+                  return const AppLayout();
                 }
-                if (setup.isNotStarted) {
-                  return Animate(
-                    effects: const [
-                      FadeEffect(
-                        duration: Duration(milliseconds: 500),
-                        delay: Duration(milliseconds: 800),
-                      )
-                    ],
-                    child: const Introduction(),
+
+                if (setup.isInProgress) {
+                  SystemChrome.setSystemUIOverlayStyle(
+                    const SystemUiOverlayStyle(
+                      systemNavigationBarColor: AppColors.introG,
+                    ),
                   );
                 }
-                return const Center(
-                  child: CircleAvatar(
-                    child: CircularProgressIndicator(),
-                  ),
+
+                return Animate(
+                  effects: const [
+                    FadeEffect(
+                      duration: Duration(milliseconds: 500),
+                      delay: Duration(milliseconds: 100),
+                    )
+                  ],
+                  child: const Introduction(),
                 );
               },
             ),

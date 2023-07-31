@@ -1,5 +1,7 @@
-import 'package:pray_quiet/data/api_data_fetch.dart';
-import 'package:pray_quiet/data/prayer_api_model.dart';
+import 'dart:convert';
+
+import 'package:pray_quiet/data/prayer_info_model.dart';
+import 'package:pray_quiet/domain/provider/settings.dart';
 import 'package:pray_quiet/domain/provider/shared_pref.dart';
 
 import 'package:pray_quiet/domain/service/service.dart';
@@ -9,38 +11,63 @@ part 'prayer.g.dart';
 
 @Riverpod(keepAlive: true)
 class Prayer extends _$Prayer {
-  PrayerApiModel? prayerDataInfo;
-  Prayers? prayers;
+  List<PrayerInfo>? prayers;
   bool? isLoading;
   @override
-  Prayers? build() {
+  Future<List<PrayerInfo>?> build() async {
     isLoading = true;
     LoggingService logger = LoggingService();
-    logger.info("prayer provider building.");
-    AsyncValue<SharedPreferences> pref =
-        ref.watch(getSharedPreferencesProvider);
-    if (pref.hasValue) {
-      logger.info("Attempting to fetch prayer from shared preferences.");
-      final String? value = pref.value!.getString("pray_time");
-      logger.info("prayer time $value");
-      if (value != null) {
-        prayerDataInfo = PrayerApiModel.fromRawJson(value);
+    try {
+      logger.info("prayer provider building.");
+      AsyncValue<SharedPreferences> pref =
+          ref.watch(getSharedPreferencesProvider);
 
-        final date = DateService().getApisToday();
+      final bool isUseCustom = pref.value!.getBool("use_custom") ?? false;
+      List<PrayerInfo> dailyPrayers;
+      final v = pref.value!.getString('custom_prayers') ?? '[]';
 
-        final res = prayerDataInfo?.praytimes[date];
+      final List<dynamic> t = json.decode(v);
+      if (isUseCustom) {
+        dailyPrayers = t.map((e) => PrayerInfo.fromRawJson(e)).toList();
+      } else {
+        dailyPrayers = await PrayerTimeService.fetchDailyPrayerTime();
+      }
 
-        prayers = Prayers.fromJson(res);
+      if (pref.hasValue) {
+        logger.info("Attempting to fetch prayers.");
 
-        logger.info("prayers fetched is $res");
+        final int intervalIdx = pref.value!.getInt("interval_type") ?? 1;
 
-        BackgroundTaskScheduleService().start(prayers!.toJson());
+        final interval = AfterPrayerIntervalType.values[intervalIdx];
+
+        logger.info(" ${isUseCustom ? 'Custom prayers' : 'prayers'} fetched");
+        //enable service
+
+        if (t.isEmpty) {
+          final customPrayers =
+              json.encode(dailyPrayers.map((e) => e.toRawJson()).toList());
+          pref.value!.setString('custom_prayers', customPrayers);
+        }
+
+        final serviceEnabled = pref.value!.getBool('enable_service') ?? true;
+        if (serviceEnabled) {
+          BackgroundTaskScheduleService().toggle(
+            prayers: dailyPrayers,
+            afterPrayerInterval: interval,
+            isEnabling: true,
+          );
+        }
 
         isLoading = false;
-        return prayers;
       }
+      isLoading = false;
+
+      prayers = dailyPrayers;
+
+      return dailyPrayers;
+    } catch (e) {
+      logger.error('An error occured building prayers $e');
     }
-    isLoading = false;
     return null;
   }
 
@@ -50,42 +77,48 @@ class Prayer extends _$Prayer {
 
       LoggingService logger = LoggingService();
 
-      final city = await LocationService.determinePosition();
-      final PrayerApiModel data = await ApiDataFetch.getPrayerTime(city);
+      final l = await LocationService.determinePosition();
+
+      final dailyPrayers = await PrayerTimeService.fetchDailyPrayerTime(l: l);
 
       AsyncValue<SharedPreferences> pref =
           ref.watch(getSharedPreferencesProvider);
       logger.info("Attempting to update prayer time ...");
 
-      pref.whenData(
-        (repo) {
-          repo.setString(
-            "pray_time",
-            data.toRawJson(),
+      final int intervalIdx = pref.value!.getInt("interval_type") ?? 1;
+
+      final interval = AfterPrayerIntervalType.values[intervalIdx];
+
+      pref.whenData((repo) {
+        logger.info("Prayer time updated");
+
+        isLoading = false;
+        final serviceEnabled = pref.value!.getBool('enable_service') ?? true;
+        if (serviceEnabled) {
+          BackgroundTaskScheduleService().toggle(
+            prayers: dailyPrayers,
+            afterPrayerInterval: interval,
+            isEnabling: true,
           );
-          logger.info("Prayer time updated");
-
-          final val = repo.getString("pray_time");
-
-          if (val != null) {
-            prayerDataInfo = PrayerApiModel.fromRawJson(val);
-
-            final date = DateService().getApisToday();
-
-            final res = prayerDataInfo?.praytimes[date];
-
-            prayers = Prayers.fromJson(res);
-
-            logger.info("updated prayers fetched is $res");
-
-            isLoading = false;
-            state = prayers;
-          }
-        },
-      );
+        }
+        prayers = dailyPrayers;
+      });
     } catch (e) {
       isLoading = false;
       rethrow;
+    }
+  }
+
+  setCustom(List<PrayerInfo> customPrayers) {
+    final LoggingService logger = LoggingService();
+    try {
+      isLoading = true;
+      prayers = customPrayers;
+      isLoading = false;
+      logger.info('Custom prayer set');
+    } catch (e) {
+      isLoading = false;
+      logger.error('An error occured');
     }
   }
 }

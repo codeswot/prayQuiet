@@ -31,14 +31,10 @@ class IntroductionPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Animate(
-          effects: const [
-            FadeEffect(
-              duration: Duration(milliseconds: 600),
-              delay: Duration(milliseconds: 50),
-            ),
-          ],
-          child: LottieBuilder.asset(intro.image),
+        LottieBuilder.asset(
+          intro.image,
+          repeat: false,
+          frameRate: FrameRate.composition,
         ),
         const SizedBox(height: 32),
         Text(

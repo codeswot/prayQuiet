@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:pray_quiet/presentation/shared/context_extension.dart';
@@ -13,6 +14,11 @@ class Introduction extends ConsumerStatefulWidget {
 }
 
 class _IntroductionState extends ConsumerState<Introduction> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   final List<IntroductionModel> _intros = <IntroductionModel>[
     IntroductionModel(
       title: 'Assalamualaikum\n🤝',
@@ -55,26 +61,46 @@ class _IntroductionState extends ConsumerState<Introduction> {
               );
             },
             onPageChanged: (index) {
+              if (index == 0) {
+                SystemChrome.setSystemUIOverlayStyle(
+                  const SystemUiOverlayStyle(
+                    systemNavigationBarColor: AppColors.introG,
+                  ),
+                );
+              } else if (index == 1) {
+                SystemChrome.setSystemUIOverlayStyle(
+                  const SystemUiOverlayStyle(
+                    systemNavigationBarColor: AppColors.introP,
+                  ),
+                );
+              } else if (index == 2) {
+                SystemChrome.setSystemUIOverlayStyle(
+                  const SystemUiOverlayStyle(
+                    systemNavigationBarColor: AppColors.introW,
+                  ),
+                );
+              }
+
               setState(() {
                 currentIndex = index;
               });
             },
           ),
-          Positioned(
-            right: 0,
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: IconButton.filledTonal(
-                  tooltip: 'Language',
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.language_outlined,
-                  ),
-                ),
-              ),
-            ),
-          ),
+          // Positioned(
+          //   right: 0,
+          //   child: SafeArea(
+          //     child: Padding(
+          //       padding: const EdgeInsets.all(16),
+          //       child: IconButton.filledTonal(
+          //         tooltip: 'Language',
+          //         onPressed: () {},
+          //         icon: const Icon(
+          //           Icons.language_outlined,
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -117,9 +143,12 @@ class _IntroductionState extends ConsumerState<Introduction> {
                   TextButton(
                     onPressed: () {
                       if (currentIndex == _intros.length - 1) {
-                        context.showAppDialog(
-                          const PermissionDialog(),
+                        SystemChrome.setSystemUIOverlayStyle(
+                          const SystemUiOverlayStyle(
+                            systemNavigationBarColor: AppColors.pG,
+                          ),
                         );
+                        context.push(const PermissionScreen());
                       } else {
                         _pageController.nextPage(
                           duration: const Duration(milliseconds: 300),

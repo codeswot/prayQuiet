@@ -16,12 +16,24 @@ extension ContextExtensions on BuildContext {
 
   void pop() => Navigator.of(this).pop();
 
+  void push(Widget screen) {
+    Navigator.of(this).push(MaterialPageRoute<void>(
+      builder: (BuildContext context) => screen,
+    ));
+  }
+
   Future<T?> showAppDialog<T>(Widget dialog) => showDialog<T>(
         useSafeArea: false,
         // barrierDismissible: false,
         context: this,
         builder: (context) => dialog,
       );
+  Future<TimeOfDay?> showAppTimePicker() async {
+    return showTimePicker(
+      context: this,
+      initialTime: TimeOfDay.now(),
+    );
+  }
 
   Future<T?> showBottomSheet<T>(Widget sheet) => showModalBottomSheet<T>(
         useRootNavigator: true,

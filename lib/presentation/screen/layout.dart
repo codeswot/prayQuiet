@@ -11,6 +11,7 @@ class AppLayout extends StatefulWidget {
 class _AppLayoutState extends State<AppLayout> {
   int selectedIndex = 0;
   final PageController _pageController = PageController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,9 +19,9 @@ class _AppLayoutState extends State<AppLayout> {
         controller: _pageController,
         children: const [
           Home(),
-          Qiblah(),
+          // Qiblah(),
           Settings(),
-          Notifications(),
+          // Notifications(),
         ],
         onPageChanged: (index) {
           setState(() {
@@ -45,14 +46,14 @@ class _AppLayoutState extends State<AppLayout> {
             icon: Icon(Icons.home),
             label: 'Home',
           ),
-          NavigationDestination(
-            icon: Icon(Icons.navigation),
-            label: 'Qiblah',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.notifications),
-            label: 'Notifications',
-          ),
+          // NavigationDestination(
+          //   icon: Icon(Icons.navigation),
+          //   label: 'Qiblah',
+          // ),
+          // NavigationDestination(
+          //   icon: Icon(Icons.notifications),
+          //   label: 'Notifications',
+          // ),
           NavigationDestination(
             icon: Icon(Icons.settings),
             label: 'Settings',
