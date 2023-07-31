@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:do_not_disturb/do_not_disturb.dart';
 import 'package:flutter/services.dart';
@@ -59,17 +61,29 @@ class Setup extends _$Setup {
       state = SetupState.inProgress;
 
       await NotificationService().requestPermissions();
-      await DoNotDisturb().openDoNotDisturbSettings();
       final g = await LocationService.determinePosition();
 
+      await DoNotDisturb().openDoNotDisturbSettings();
+
+      final dailyPrayers =
+          await PrayerTimeService.fetchDailyPrayerTime(location: g);
+
+      final dailyPrayersJson =
+          json.encode(dailyPrayers.map((e) => e.toRawJson()).toList());
+
       Position pos = Position(lat: g.latitude, lng: g.longitude, mock: false);
+
       pref.whenData(
         (repo) => {
           repo.setBool("is-setup-complete", true),
+          repo.setString('prayers', dailyPrayersJson),
+          repo.setString('custom_prayers', dailyPrayersJson),
           repo.setString('position', pos.toRawJson()),
           logger.info("Set is-setup-complete to true"),
         },
       );
+
+      //serve
       AndroidAlarmManager.periodic(
         const Duration(hours: 20),
         3,

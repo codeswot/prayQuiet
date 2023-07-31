@@ -79,7 +79,8 @@ class Prayer extends _$Prayer {
 
       final l = await LocationService.determinePosition();
 
-      final dailyPrayers = await PrayerTimeService.fetchDailyPrayerTime(l: l);
+      final dailyPrayers =
+          await PrayerTimeService.fetchDailyPrayerTime(location: l);
 
       AsyncValue<SharedPreferences> pref =
           ref.watch(getSharedPreferencesProvider);
