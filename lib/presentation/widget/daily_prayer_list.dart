@@ -14,10 +14,9 @@ class DailyPrayerList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(builder: (context, ref, _) {
-      final prayers = ref.watch(prayerProvider);
-
-      return prayers.when(data: (dailyPrayers) {
+    return Consumer(
+      builder: (context, ref, _) {
+        final dailyPrayers = ref.watch(prayerProvider.notifier).prayers;
         bool isLoading = ref.watch(prayerProvider.notifier).isLoading ?? false;
 
         if (isLoading) {
@@ -31,9 +30,6 @@ class DailyPrayerList extends StatelessWidget {
             ),
           );
         }
-        if (dailyPrayers == null) {
-          return const SizedBox();
-        }
 
         return StreamBuilder<PrayerInfo?>(
           stream: PrayerTimeService.getCurrentOrNextPrayerStream(dailyPrayers),
@@ -41,22 +37,20 @@ class DailyPrayerList extends StatelessWidget {
             final currentPrayer = snapshot.data?.prayerName;
 
             return Column(
-              children: dailyPrayers.map((dailyPrayer) {
-                return DailyPrayerTile(
-                  title: dailyPrayer.prayerName,
-                  time: DateService.getFormartedTime12(
-                      dailyPrayer.prayerDateTime),
-                  currentPrayer: currentPrayer ?? 'Fajr',
-                );
-              }).toList(),
+              children: dailyPrayers.map(
+                (dailyPrayer) {
+                  return DailyPrayerTile(
+                    title: dailyPrayer.prayerName,
+                    time: DateService.getFormartedTime12(
+                        dailyPrayer.prayerDateTime),
+                    currentPrayer: currentPrayer ?? 'Fajr',
+                  );
+                },
+              ).toList(),
             );
           },
         );
-      }, loading: () {
-        return const SizedBox();
-      }, error: (err, trace) {
-        return const SizedBox();
-      });
-    });
+      },
+    );
   }
 }

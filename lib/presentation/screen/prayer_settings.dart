@@ -74,7 +74,8 @@ class _PrayerSettingsState extends ConsumerState<PrayerSettings> {
                                   context.showAppDialog(
                                     const AppDialog(
                                       title: 'Custom prayer time',
-                                      description: '',
+                                      description:
+                                          'By enabling this option, you can input the specific prayer times observed at your masjid, allowing the app to align with your local community\'s prayer schedule. By toggling this option, you ensure that the app accurately reflects the prayer times practiced at your masjid, enhancing your prayer experience and spiritual connection.',
                                     ),
                                   );
                                 },
@@ -89,9 +90,15 @@ class _PrayerSettingsState extends ConsumerState<PrayerSettings> {
                         ),
                         Switch.adaptive(
                           value: settingRef.useCustom ?? false,
-                          onChanged: (v) {
-                            settingRef.toggleUseCustom(v);
-                            setState(() {});
+                          onChanged: (v) async {
+                            await serviceFirstInterceptor(
+                              context,
+                              settingRef.serviceEnable ?? false,
+                            );
+                            if (settingRef.serviceEnable ?? false) {
+                              settingRef.toggleUseCustom(v);
+                              setState(() {});
+                            }
                           },
                         ),
                       ],
@@ -105,74 +112,71 @@ class _PrayerSettingsState extends ConsumerState<PrayerSettings> {
                         child: ListView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: prayerRef.prayers?.length,
+                          itemCount: prayerRef.prayers.length,
                           itemBuilder: (ctx, idx) {
-                            final PrayerInfo prayer = prayerRef.prayers![idx];
+                            final PrayerInfo prayer = prayerRef.prayers[idx];
                             return Padding(
                               padding: EdgeInsets.only(bottom: 3.h),
-                              child: GestureDetector(
-                                onTap: () async {
-                                  bool enabled = await serviceFirstInterceptor(
-                                    context,
-                                    settingRef.serviceEnable ?? false,
-                                  );
-                                  if (enabled) {
-                                    setState(() {});
-                                  }
-                                },
-                                child: SettingsItemContainer(
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.access_time,
-                                        size: 13.sp,
+                              child: SettingsItemContainer(
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.access_time,
+                                      size: 13.sp,
+                                    ),
+                                    SizedBox(width: 8.w),
+                                    Text(
+                                      prayer.prayerName,
+                                      style: AppTypography.m3BodylLarge(
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      SizedBox(width: 8.w),
-                                      Text(
-                                        prayer.prayerName,
-                                        style: AppTypography.m3BodylLarge(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      Text(
-                                        DateService.getFormartedTime12(
-                                            prayer.prayerDateTime),
-                                      ),
-                                      SizedBox(
-                                        width: 50.w,
-                                        child: TextButton(
-                                          onPressed: () async {
-                                            final d = await context
-                                                .showAppTimePicker();
-                                            if (d == null) {
-                                              return;
+                                    ),
+                                    const Spacer(),
+                                    Text(
+                                      DateService.getFormartedTime12(
+                                          prayer.prayerDateTime),
+                                    ),
+                                    SizedBox(
+                                      width: 50.w,
+                                      child: TextButton(
+                                        onPressed: () async {
+                                          await serviceFirstInterceptor(
+                                            context,
+                                            settingRef.serviceEnable ?? false,
+                                          );
+                                          if (settingRef.serviceEnable ??
+                                              false) {
+                                            if (context.mounted) {
+                                              final d = await context
+                                                  .showAppTimePicker();
+                                              if (d == null) {
+                                                return;
+                                              }
+                                              final updatedPrayer = _updateTime(
+                                                prayers: prayerRef.prayers,
+                                                prayer: prayer,
+                                                timeOfDay: d,
+                                              );
+
+                                              settingRef.updateCustomPrayerTime(
+                                                  updatedPrayer);
+                                              setState(() {});
                                             }
-                                            final updatedPrayer = _updateTime(
-                                              prayers: prayerRef.prayers ?? [],
-                                              prayer: prayer,
-                                              timeOfDay: d,
-                                            );
+                                          }
 
-                                            settingRef.updateCustomPrayerTime(
-                                                updatedPrayer);
-                                            setState(() {});
-
-                                            //
-                                          },
-                                          child: const Text(
-                                            'Edit',
-                                            style: TextStyle(
-                                              decoration:
-                                                  TextDecoration.underline,
-                                              decorationColor:
-                                                  AppColors.aleGreen,
-                                            ),
+                                          //
+                                        },
+                                        child: const Text(
+                                          'Edit',
+                                          style: TextStyle(
+                                            decoration:
+                                                TextDecoration.underline,
+                                            decorationColor: AppColors.aleGreen,
                                           ),
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             );

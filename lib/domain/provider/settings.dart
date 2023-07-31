@@ -38,7 +38,6 @@ class Settings extends _$Settings {
     try {
       AsyncValue<SharedPreferences> pref =
           ref.watch(getSharedPreferencesProvider);
-
       if (pref.hasValue) {
         final int intervalIdx = pref.value!.getInt("interval_type") ?? 1;
 
@@ -47,10 +46,32 @@ class Settings extends _$Settings {
         pref.whenData((repo) async {
           _logger.info("Attempting to set service to $value.");
           serviceEnable = value;
+
           await repo.setBool('enable_service', value);
+
           _logger.info("service set to $value.");
 
-          final dailyPrayers = await PrayerTimeService.fetchDailyPrayerTime();
+          final useCustom = pref.value!.getBool('use_custom') ?? false;
+
+          List<PrayerInfo> dailyPrayers;
+
+          if (useCustom) {
+            final prayerJson = pref.value!.getString('custom_prayers') ?? '[]';
+
+            final List<dynamic> t = json.decode(prayerJson);
+
+            final cDailyPrayers =
+                t.map((e) => PrayerInfo.fromRawJson(e)).toList();
+
+            dailyPrayers = cDailyPrayers;
+            //
+          } else {
+            dailyPrayers = await PrayerTimeService.fetchDailyPrayerTime();
+            final prayersJson =
+                json.encode(dailyPrayers.map((e) => e.toRawJson()));
+            pref.value!.setString('prayers', prayersJson);
+          }
+
           BackgroundTaskScheduleService().toggle(
             prayers: dailyPrayers,
             afterPrayerInterval: interval,
@@ -92,6 +113,9 @@ class Settings extends _$Settings {
           ref.watch(getSharedPreferencesProvider);
 
       final serviceEnabled = pref.value!.getBool('enable_service') ?? true;
+      List<PrayerInfo> dailyPrayers;
+
+      final useCustom = pref.value!.getBool('use_custom') ?? false;
       if (!serviceEnabled) {
         return;
       }
@@ -103,7 +127,18 @@ class Settings extends _$Settings {
           _logger.info("Attempting to set Interval Type to $type");
           intervalType = value;
           await repo.setInt('interval_type', value);
-          final dailyPrayers = await PrayerTimeService.fetchDailyPrayerTime();
+          if (useCustom) {
+            final prayerJson = pref.value!.getString('custom_prayers') ?? '[]';
+
+            final List<dynamic> t = json.decode(prayerJson);
+
+            final cDailyPrayers =
+                t.map((e) => PrayerInfo.fromRawJson(e)).toList();
+
+            dailyPrayers = cDailyPrayers;
+          } else {
+            dailyPrayers = await PrayerTimeService.fetchDailyPrayerTime();
+          }
           BackgroundTaskScheduleService().toggle(
             prayers: dailyPrayers,
             afterPrayerInterval: type,
@@ -129,10 +164,11 @@ class Settings extends _$Settings {
         return;
       }
       List<PrayerInfo> dailyPrayers;
+      useCustom = value;
       if (pref.hasValue) {
         pref.whenData((repo) async {
           final type = AfterPrayerIntervalType.values[intervalType ?? 0];
-          useCustom = value;
+
           await repo.setBool('use_custom', value);
 
           if (value) {
@@ -143,17 +179,11 @@ class Settings extends _$Settings {
             dailyPrayers = t.map((e) => PrayerInfo.fromRawJson(e)).toList();
             pray.setCustom(dailyPrayers);
           } else {
-            dailyPrayers = await PrayerTimeService.fetchDailyPrayerTime();
             pray.updatePrayer();
           }
 
-          BackgroundTaskScheduleService().toggle(
-            prayers: dailyPrayers,
-            afterPrayerInterval: type,
-            isEnabling: true,
-          );
-          _logger
-              .info("with is custom prayer as $value and interval type $type.");
+          _logger.info(
+              "use ${value ? 'custom ' : ''} prayer and interval type $type.");
         });
       }
     } catch (e) {

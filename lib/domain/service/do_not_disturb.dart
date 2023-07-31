@@ -11,24 +11,21 @@ class DoNotDisturbService {
     try {
       await _doNotDisturb.setStatus(false);
 
-      final prayers = await PrayerTimeService.fetchDailyPrayerTime();
-
       _logger.info("Attempting to enable or disable DoNotDisturb");
 
-      for (final prayer in prayers) {
-        final res = await NotificationService().showNotification(
-          prayerName: prayer.prayerName,
-          isEnabling: true,
-          prayerTime: DateService.getFormartedTime12(prayer.prayerDateTime),
+      final res = await NotificationService().showNotification(
+        prayerName: '',
+        isEnabling: true,
+        prayerTime: '',
+      );
+
+      if (res) {
+        //|| !res
+        await Future.delayed(
+          const Duration(seconds: 8),
         );
-        if (res) {
-          //|| !res
-          await Future.delayed(
-            const Duration(seconds: 8),
-          );
-          await _doNotDisturb.setStatus(true);
-          _logger.info("Do not disturb enabled");
-        }
+        await _doNotDisturb.setStatus(true);
+        _logger.info("Do not disturb enabled");
       }
     } catch (e) {
       _logger.error('Error setting do not disturb: $e');

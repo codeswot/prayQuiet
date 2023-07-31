@@ -6,15 +6,17 @@ import 'package:pray_times/pray_times.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PrayerTimeService {
-  static Future<List<PrayerInfo>> fetchDailyPrayerTime({Position? l}) async {
+  static Future<List<PrayerInfo>> fetchDailyPrayerTime(
+      {Position? location}) async {
     final LoggingService logger = LoggingService();
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final String value = prefs.getString("position") ??
           '{"lat":"6.5244","lng":"3.3792","mock":"true"}';
       late p.Position pos;
-      if (l != null) {
-        pos = p.Position(lat: l.latitude, lng: l.longitude, mock: false);
+      if (location != null) {
+        pos = p.Position(
+            lat: location.latitude, lng: location.longitude, mock: false);
       } else {
         pos = p.Position.fromRawJson(value);
       }
