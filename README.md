@@ -72,7 +72,7 @@ https://play.google.com/store/apps/details?id=com.geeksaxis.pray_quiet .
 
   
 
-We value user feedback and are committed to continuously improving Pray Quiet. If you have any suggestions, questions, or encounter any issues, please reach out to our dedicated support team at elmubarak333@gmail.com.
+We value user feedback and are committed to continuously improving Pray Quiet. If you have any suggestions, questions, or encounter any issues, please reach out to me at elmubarak333@gmail.com.
 
   
 
