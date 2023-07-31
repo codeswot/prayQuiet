@@ -91,11 +91,14 @@ class _PrayerSettingsState extends ConsumerState<PrayerSettings> {
                         Switch.adaptive(
                           value: settingRef.useCustom ?? false,
                           onChanged: (v) async {
-                            bool enabled = await serviceFirstInterceptor(
+                            await serviceFirstInterceptor(
                               context,
                               settingRef.serviceEnable ?? false,
                             );
-                            if (enabled) {}
+                            if (settingRef.serviceEnable ?? false) {
+                              settingRef.toggleUseCustom(v);
+                              setState(() {});
+                            }
                           },
                         ),
                       ],
@@ -114,80 +117,66 @@ class _PrayerSettingsState extends ConsumerState<PrayerSettings> {
                             final PrayerInfo prayer = prayerRef.prayers[idx];
                             return Padding(
                               padding: EdgeInsets.only(bottom: 3.h),
-                              child: GestureDetector(
-                                onTap: () async {
-                                  bool enabled = await serviceFirstInterceptor(
-                                    context,
-                                    settingRef.serviceEnable ?? false,
-                                  );
-                                  if (enabled) {
-                                    setState(() {});
-                                  }
-                                },
-                                child: SettingsItemContainer(
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.access_time,
-                                        size: 13.sp,
+                              child: SettingsItemContainer(
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.access_time,
+                                      size: 13.sp,
+                                    ),
+                                    SizedBox(width: 8.w),
+                                    Text(
+                                      prayer.prayerName,
+                                      style: AppTypography.m3BodylLarge(
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      SizedBox(width: 8.w),
-                                      Text(
-                                        prayer.prayerName,
-                                        style: AppTypography.m3BodylLarge(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      Text(
-                                        DateService.getFormartedTime12(
-                                            prayer.prayerDateTime),
-                                      ),
-                                      SizedBox(
-                                        width: 50.w,
-                                        child: TextButton(
-                                          onPressed: () async {
-                                            bool enabled =
-                                                await serviceFirstInterceptor(
-                                              context,
-                                              settingRef.serviceEnable ?? false,
-                                            );
-                                            if (enabled) {
-                                              if (context.mounted) {
-                                                final d = await context
-                                                    .showAppTimePicker();
-                                                if (d == null) {
-                                                  return;
-                                                }
-                                                final updatedPrayer =
-                                                    _updateTime(
-                                                  prayers: prayerRef.prayers,
-                                                  prayer: prayer,
-                                                  timeOfDay: d,
-                                                );
-
-                                                settingRef
-                                                    .updateCustomPrayerTime(
-                                                        updatedPrayer);
-                                                setState(() {});
+                                    ),
+                                    const Spacer(),
+                                    Text(
+                                      DateService.getFormartedTime12(
+                                          prayer.prayerDateTime),
+                                    ),
+                                    SizedBox(
+                                      width: 50.w,
+                                      child: TextButton(
+                                        onPressed: () async {
+                                          await serviceFirstInterceptor(
+                                            context,
+                                            settingRef.serviceEnable ?? false,
+                                          );
+                                          if (settingRef.serviceEnable ??
+                                              false) {
+                                            if (context.mounted) {
+                                              final d = await context
+                                                  .showAppTimePicker();
+                                              if (d == null) {
+                                                return;
                                               }
-                                            }
+                                              final updatedPrayer = _updateTime(
+                                                prayers: prayerRef.prayers,
+                                                prayer: prayer,
+                                                timeOfDay: d,
+                                              );
 
-                                            //
-                                          },
-                                          child: const Text(
-                                            'Edit',
-                                            style: TextStyle(
-                                              decoration:
-                                                  TextDecoration.underline,
-                                              decorationColor:
-                                                  AppColors.aleGreen,
-                                            ),
+                                              settingRef.updateCustomPrayerTime(
+                                                  updatedPrayer);
+                                              setState(() {});
+                                            }
+                                          }
+
+                                          //
+                                        },
+                                        child: const Text(
+                                          'Edit',
+                                          style: TextStyle(
+                                            decoration:
+                                                TextDecoration.underline,
+                                            decorationColor: AppColors.aleGreen,
                                           ),
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             );

@@ -129,8 +129,13 @@ class Settings extends _$Settings {
           await repo.setInt('interval_type', value);
           if (useCustom) {
             final prayerJson = pref.value!.getString('custom_prayers') ?? '[]';
-            final t = json.decode(prayerJson);
-            dailyPrayers = t.map((e) => PrayerInfo.fromRawJson(e)).toList();
+
+            final List<dynamic> t = json.decode(prayerJson);
+
+            final cDailyPrayers =
+                t.map((e) => PrayerInfo.fromRawJson(e)).toList();
+
+            dailyPrayers = cDailyPrayers;
           } else {
             dailyPrayers = await PrayerTimeService.fetchDailyPrayerTime();
           }
@@ -159,10 +164,11 @@ class Settings extends _$Settings {
         return;
       }
       List<PrayerInfo> dailyPrayers;
+      useCustom = value;
       if (pref.hasValue) {
         pref.whenData((repo) async {
           final type = AfterPrayerIntervalType.values[intervalType ?? 0];
-          useCustom = value;
+
           await repo.setBool('use_custom', value);
 
           if (value) {
