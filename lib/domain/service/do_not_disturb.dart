@@ -57,9 +57,6 @@ class DoNotDisturbService {
           soundMode = RingerModeStatus.silent;
       }
 
-      await Future.delayed(
-        const Duration(seconds: 5),
-      );
       await _doNotDisturb.setStatus(false);
 
       await SoundMode.setSoundMode(soundMode);

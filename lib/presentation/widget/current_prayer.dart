@@ -49,9 +49,8 @@ class CurrentPrayer extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        DateService.fmt12Hr(
-                          DateService.getFormartedTime(
-                              nextPrayer.prayerDateTime),
+                        DateService.getFormartedTime12(
+                          nextPrayer.prayerDateTime,
                         ),
                         style: AppTypography.m3TitlelMedium(),
                       ),

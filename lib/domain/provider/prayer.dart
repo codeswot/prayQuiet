@@ -78,6 +78,7 @@ class Prayer extends _$Prayer {
 
       final useCustom = pref.value!.getBool('use_custom') ?? true;
       if (useCustom) {
+        _logger.info('using custom date');
         return;
       }
       isLoading = true;
