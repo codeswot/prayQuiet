@@ -89,8 +89,9 @@ class PrayerTimeService {
     }
 
     final lastPrayer = prayers.last;
+    final firstPrayer = prayers.first;
     if (lastPrayer.prayerName == "Isha") {
-      final nextDay = now.add(const Duration(days: 1));
+      final nextDay = firstPrayer.prayerDateTime.add(const Duration(days: 1));
 
       return PrayerInfo(
         nextDay,

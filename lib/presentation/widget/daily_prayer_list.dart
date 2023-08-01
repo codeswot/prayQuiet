@@ -35,7 +35,6 @@ class DailyPrayerList extends StatelessWidget {
           stream: PrayerTimeService.getCurrentOrNextPrayerStream(dailyPrayers),
           builder: (context, snapshot) {
             final currentPrayer = snapshot.data?.prayerName;
-
             return Column(
               children: dailyPrayers.map(
                 (dailyPrayer) {
