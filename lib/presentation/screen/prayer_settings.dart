@@ -136,43 +136,38 @@ class _PrayerSettingsState extends ConsumerState<PrayerSettings> {
                                       DateService.getFormartedTime12(
                                           prayer.prayerDateTime),
                                     ),
-                                    SizedBox(
-                                      width: 50.w,
-                                      child: TextButton(
-                                        onPressed: () async {
-                                          await serviceFirstInterceptor(
-                                            context,
-                                            settingRef.serviceEnable ?? false,
-                                          );
-                                          if (settingRef.serviceEnable ??
-                                              false) {
-                                            if (context.mounted) {
-                                              final d = await context
-                                                  .showAppTimePicker();
-                                              if (d == null) {
-                                                return;
-                                              }
-                                              final updatedPrayer = _updateTime(
-                                                prayers: prayerRef.prayers,
-                                                prayer: prayer,
-                                                timeOfDay: d,
-                                              );
-
-                                              settingRef.updateCustomPrayerTime(
-                                                  updatedPrayer);
-                                              setState(() {});
+                                    TextButton(
+                                      onPressed: () async {
+                                        await serviceFirstInterceptor(
+                                          context,
+                                          settingRef.serviceEnable ?? false,
+                                        );
+                                        if (settingRef.serviceEnable ?? false) {
+                                          if (context.mounted) {
+                                            final d = await context
+                                                .showAppTimePicker();
+                                            if (d == null) {
+                                              return;
                                             }
-                                          }
+                                            final updatedPrayer = _updateTime(
+                                              prayers: prayerRef.prayers,
+                                              prayer: prayer,
+                                              timeOfDay: d,
+                                            );
 
-                                          //
-                                        },
-                                        child: const Text(
-                                          'Edit',
-                                          style: TextStyle(
-                                            decoration:
-                                                TextDecoration.underline,
-                                            decorationColor: AppColors.aleGreen,
-                                          ),
+                                            settingRef.updateCustomPrayerTime(
+                                                updatedPrayer);
+                                            setState(() {});
+                                          }
+                                        }
+
+                                        //
+                                      },
+                                      child: const Text(
+                                        'Edit',
+                                        style: TextStyle(
+                                          decoration: TextDecoration.underline,
+                                          decorationColor: AppColors.aleGreen,
                                         ),
                                       ),
                                     ),
