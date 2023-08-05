@@ -24,7 +24,7 @@ class Settings extends _$Settings {
     if (pref.hasValue) {
       _logger.info("Attempting to fetch previous settings.");
 
-      serviceEnable = pref.value!.getBool("enable_service") ?? true;
+      serviceEnable = pref.value!.getBool("enable_service") ?? false;
 
       behaviourType = pref.value!.getInt("behaviour_type") ?? 1;
 
@@ -88,7 +88,7 @@ class Settings extends _$Settings {
     try {
       AsyncValue<SharedPreferences> pref =
           ref.watch(getSharedPreferencesProvider);
-      final serviceEnabled = pref.value!.getBool('enable_service') ?? true;
+      final serviceEnabled = pref.value!.getBool('enable_service') ?? false;
       if (!serviceEnabled) {
         return;
       }
@@ -112,7 +112,7 @@ class Settings extends _$Settings {
       AsyncValue<SharedPreferences> pref =
           ref.watch(getSharedPreferencesProvider);
 
-      final serviceEnabled = pref.value!.getBool('enable_service') ?? true;
+      final serviceEnabled = pref.value!.getBool('enable_service') ?? false;
       List<PrayerInfo> dailyPrayers;
 
       final useCustom = pref.value!.getBool('use_custom') ?? false;
@@ -159,7 +159,7 @@ class Settings extends _$Settings {
 
       final Prayer pray = ref.watch(prayerProvider.notifier);
 
-      final serviceEnabled = pref.value!.getBool('enable_service') ?? true;
+      final serviceEnabled = pref.value!.getBool('enable_service') ?? false;
       if (!serviceEnabled) {
         return;
       }

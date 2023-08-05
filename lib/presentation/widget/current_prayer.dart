@@ -14,6 +14,7 @@ class CurrentPrayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
     return Consumer(
       builder: (context, ref, _) {
         final dailyPrayers = ref.watch(prayerProvider);
@@ -60,7 +61,14 @@ class CurrentPrayer extends StatelessWidget {
                         children: [
                           Text(
                             DateService.getcountDownOrNow(
-                                nextPrayer.prayerDateTime),
+                              DateTime(
+                                now.year,
+                                now.month,
+                                now.day,
+                                nextPrayer.prayerDateTime.hour,
+                                nextPrayer.prayerDateTime.minute,
+                              ),
+                            ),
                             style: AppTypography.m3BodylLarge(),
                           ),
                         ],

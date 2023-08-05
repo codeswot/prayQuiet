@@ -74,12 +74,17 @@ class Setup extends _$Setup {
       pref.whenData(
         (repo) => {
           repo.setBool("is-setup-complete", true),
+          repo.setBool("enable_service", true),
           repo.setBool("use_custom", false),
+
           //
           repo.setString('prayers', dailyPrayersJson),
           repo.setString('custom_prayers', dailyPrayersJson),
           //
           repo.setString('position', pos.toRawJson()),
+          repo.setInt('behaviour_type', 1),
+          repo.setInt('interval_type', 1),
+
           _logger.info("Set is-setup-complete to true"),
         },
       );

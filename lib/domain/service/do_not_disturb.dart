@@ -40,22 +40,7 @@ class DoNotDisturbService {
       _logger.info("Attempting to enable or disable DoNotDisturb");
 
       final int idx = pref.getInt("interval_type") ?? 1;
-      RingerModeStatus soundMode = RingerModeStatus.silent;
-
-      switch (idx) {
-        case 0:
-          soundMode = RingerModeStatus.vibrate;
-          break;
-        case 1:
-          soundMode = RingerModeStatus.normal;
-          break;
-        case 2:
-          soundMode = RingerModeStatus.silent;
-          break;
-
-        default:
-          soundMode = RingerModeStatus.silent;
-      }
+      RingerModeStatus soundMode = _afterPrayerMode(idx);
 
       await _doNotDisturb.setStatus(false);
 
@@ -71,6 +56,22 @@ class DoNotDisturbService {
       // TODO: Add as'salamualiakum custom notification sound
     } catch (e) {
       _logger.error('Error setting do not disturb: $e');
+    }
+  }
+
+  RingerModeStatus _afterPrayerMode(int idx) {
+    switch (idx) {
+      case 0:
+        return RingerModeStatus.vibrate;
+
+      case 1:
+        return RingerModeStatus.normal;
+
+      case 2:
+        return RingerModeStatus.silent;
+
+      default:
+        return RingerModeStatus.normal;
     }
   }
 }

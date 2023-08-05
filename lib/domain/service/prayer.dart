@@ -72,34 +72,38 @@ class PrayerTimeService {
   static PrayerInfo? getCurrentOrNextPrayer(List<PrayerInfo> prayers) {
     final now = DateTime.now();
 
-    PrayerInfo? nextPrayer;
-
     for (final prayer in prayers) {
-      if (now.isBefore(prayer.prayerDateTime) ||
-          now.isAtSameMomentAs(prayer.prayerDateTime)) {
-        // If the current time is before or at the same time as the next prayer, return it.
+      final prayerTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        prayer.prayerDateTime.hour,
+        prayer.prayerDateTime.minute,
+      );
+      if (now.isBefore(prayerTime) || now.isAtSameMomentAs(prayerTime)) {
         return prayer;
-      } else if (now.isAfter(prayer.prayerDateTime)) {
-        final difference = now.difference(prayer.prayerDateTime);
+      } else if (now.isAfter(prayerTime)) {
+        final difference = now.difference(prayerTime);
         if (difference.inMinutes <= 10) {
-          // If the current time is within 10 minutes after the prayer, return it.
           return prayer;
         }
       }
     }
 
-    final lastPrayer = prayers.last;
     final firstPrayer = prayers.first;
-    if (lastPrayer.prayerName == "Isha") {
-      final nextDay = firstPrayer.prayerDateTime.add(const Duration(days: 1));
 
-      return PrayerInfo(
-        nextDay,
-        'Fajr (Next Day)',
-      );
-    }
+    final nextDay = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      firstPrayer.prayerDateTime.hour,
+      firstPrayer.prayerDateTime.minute,
+    ).add(const Duration(days: 1));
 
-    return nextPrayer;
+    return PrayerInfo(
+      nextDay,
+      'Fajr (Next Day)',
+    );
   }
 
   static Stream<PrayerInfo?> getCurrentOrNextPrayerStream(
