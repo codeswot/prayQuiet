@@ -80,7 +80,7 @@ class PrayQuietApp extends StatelessWidget {
                   effects: const [
                     FadeEffect(
                       duration: Duration(milliseconds: 500),
-                      delay: Duration(milliseconds: 100),
+                      delay: Duration(milliseconds: 90),
                     )
                   ],
                   child: const Introduction(),
