@@ -61,6 +61,7 @@ class CurrentPrayer extends StatelessWidget {
                         children: [
                           Text(
                             DateService.getcountDownOrNow(
+                              context,
                               DateTime(
                                 now.year,
                                 now.month,

@@ -1,5 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:intl/intl.dart';
+import 'package:pray_quiet/data/app_locale.dart';
 import 'package:pray_quiet/domain/service/service.dart';
 
 class DateService {
@@ -60,12 +63,12 @@ class DateService {
     return "${hijriCalendar.hDay}-${hijriCalendar.hMonth}-${hijriCalendar.hYear}";
   }
 
-  static String getcountDownOrNow(DateTime dateTime) {
+  static String getcountDownOrNow(BuildContext context, DateTime dateTime) {
     final now = DateTime.now();
     final countdownDuration = dateTime.difference(now);
 
     if (countdownDuration.isNegative) {
-      return "Now";
+      return AppLocale.now.getString(context);
     } else {
       return "- ${formatDuration(countdownDuration)}";
     }

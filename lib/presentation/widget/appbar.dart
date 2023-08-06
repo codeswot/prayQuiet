@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:pray_quiet/domain/provider/prayer.dart';
+import 'package:pray_quiet/data/app_locale.dart';
 import 'package:pray_quiet/presentation/style/style.dart';
 import 'package:pray_quiet/presentation/widget/widget.dart';
 import 'package:shimmer/shimmer.dart';
@@ -22,6 +23,8 @@ class CustomSliverAppBar extends StatefulWidget {
   State<CustomSliverAppBar> createState() => _CustomSliverAppBarState();
 }
 
+final FlutterLocalization localization = FlutterLocalization.instance;
+
 class _CustomSliverAppBarState extends State<CustomSliverAppBar> {
   @override
   Widget build(BuildContext context) {
@@ -31,7 +34,10 @@ class _CustomSliverAppBarState extends State<CustomSliverAppBar> {
           actions: [
             IconButton(
               onPressed: () async {
-                ref.watch(prayerProvider.notifier).updatePrayer();
+                // ref.watch(prayerProvider.notifier).updatePrayer();
+                localization.translate(
+                  PrayQuietLocal.en.name,
+                );
               },
               icon: Shimmer.fromColors(
                 baseColor: AppColors.text,

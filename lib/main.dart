@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pray_quiet/data/app_locale.dart';
 import 'package:pray_quiet/domain/provider/setup.dart';
 import 'package:pray_quiet/domain/service/service.dart';
 import 'package:pray_quiet/presentation/screen/screen.dart';
@@ -31,8 +33,32 @@ void main() async {
   FlutterNativeSplash.remove();
 }
 
-class PrayQuietApp extends StatelessWidget {
+class PrayQuietApp extends StatefulWidget {
   const PrayQuietApp({Key? key}) : super(key: key);
+
+  @override
+  State<PrayQuietApp> createState() => _PrayQuietAppState();
+}
+
+class _PrayQuietAppState extends State<PrayQuietApp> {
+  final FlutterLocalization localization = FlutterLocalization.instance;
+  @override
+  void initState() {
+    localization.init(
+      mapLocales: [
+        const MapLocale('en', AppLocale.EN),
+        const MapLocale('ha', AppLocale.HA),
+      ],
+      initLanguageCode: 'en',
+    );
+    localization.onTranslatedLanguage = _onTranslatedLanguage;
+    super.initState();
+  }
+
+// the setState function here is a must to add
+  void _onTranslatedLanguage(Locale? locale) {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +70,8 @@ class PrayQuietApp extends StatelessWidget {
         return MaterialApp(
           title: 'PrayQuiet',
           debugShowCheckedModeBanner: false,
+          supportedLocales: localization.supportedLocales,
+          localizationsDelegates: localization.localizationsDelegates,
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
               seedColor: AppColors.primary,
@@ -80,7 +108,7 @@ class PrayQuietApp extends StatelessWidget {
                   effects: const [
                     FadeEffect(
                       duration: Duration(milliseconds: 500),
-                      delay: Duration(milliseconds: 100),
+                      delay: Duration(milliseconds: 90),
                     )
                   ],
                   child: const Introduction(),

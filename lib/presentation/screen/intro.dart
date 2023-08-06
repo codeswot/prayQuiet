@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pray_quiet/data/app_locale.dart';
 
 import 'package:pray_quiet/presentation/shared/context_extension.dart';
 import 'package:pray_quiet/presentation/style/style.dart';
@@ -19,44 +22,43 @@ class _IntroductionState extends ConsumerState<Introduction> {
     super.initState();
   }
 
-  final List<IntroductionModel> _intros = <IntroductionModel>[
-    IntroductionModel(
-      title: 'Assalamualaikum\n🤝',
-      description: 'Welcome to Pray Quiet, the app that helps you pray on time',
-      image: AppAssets.intro1,
-      color: AppColors.primary,
-    ),
-    IntroductionModel(
-      title: 'Prayer on time\n🕋',
-      description:
-          'with Pray Quiet, you can get notified when it\'s time to pray',
-      image: AppAssets.intro2,
-      color: AppColors.secondary,
-    ),
-    IntroductionModel(
-      title: 'Pray Quiet\n🤫',
-      description:
-          'Pray Quiet automatically puts your phone on silence,Pray without distractions',
-      image: AppAssets.intro3,
-      color: AppColors.tertiary,
-    ),
-  ];
   final PageController _pageController = PageController();
   int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    final List<IntroductionModel> intros = <IntroductionModel>[
+      IntroductionModel(
+        title: AppLocale.intro1Title.getString(context),
+        description: AppLocale.intro1Desc.getString(context),
+        image: AppAssets.intro1,
+        color: AppColors.primary,
+      ),
+      IntroductionModel(
+        title: AppLocale.intro2Title.getString(context),
+        description: AppLocale.intro2Desc.getString(context),
+        image: AppAssets.intro2,
+        color: AppColors.secondary,
+      ),
+      IntroductionModel(
+        title: AppLocale.intro3Title.getString(context),
+        description: AppLocale.intro3Desc.getString(context),
+        image: AppAssets.intro3,
+        color: AppColors.tertiary,
+      ),
+    ];
+
     return Scaffold(
       body: Stack(
         children: [
           PageView.builder(
-            itemCount: _intros.length,
+            itemCount: intros.length,
             controller: _pageController,
             itemBuilder: (context, index) {
-              final intro = _intros[index];
+              final intro = intros[index];
               return Container(
                 padding: const EdgeInsets.all(16),
-                color: _intros[index].color.withOpacity(0.3),
+                color: intros[index].color.withOpacity(0.3),
                 child: IntroductionPage(intro),
               );
             },
@@ -86,21 +88,58 @@ class _IntroductionState extends ConsumerState<Introduction> {
               });
             },
           ),
-          // Positioned(
-          //   right: 0,
-          //   child: SafeArea(
-          //     child: Padding(
-          //       padding: const EdgeInsets.all(16),
-          //       child: IconButton.filledTonal(
-          //         tooltip: 'Language',
-          //         onPressed: () {},
-          //         icon: const Icon(
-          //           Icons.language_outlined,
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // ),
+          Positioned(
+            right: 0,
+            child: SafeArea(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: PopupMenuButton<String>(
+                    tooltip: AppLocale.language.getString(context),
+                    initialValue:
+                        localization.currentLocale?.languageCode ?? 'en',
+                    onSelected: (v) {
+                      localization.translate(v);
+                    },
+                    itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                          value: 'en',
+                          child: Text(
+                            'English',
+                            style: AppTypography.m3BodylLarge(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: 'ha',
+                          child: Text(
+                            'Hausa',
+                            style: AppTypography.m3BodylLarge(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ];
+                    },
+                    icon: Container(
+                      padding: EdgeInsets.all(8.sp),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.text.withOpacity(0.2),
+                      ),
+                      child: const Icon(
+                        Icons.language_outlined,
+                        color: AppColors.pG,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -120,7 +159,7 @@ class _IntroductionState extends ConsumerState<Introduction> {
                       );
                     },
                     child: Text(
-                      'previous',
+                      AppLocale.previous.getString(context),
                       style: AppTypography.m3BodylLarge(
                         color: AppColors.text,
                         fontWeight: FontWeight.w600,
@@ -129,12 +168,12 @@ class _IntroductionState extends ConsumerState<Introduction> {
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: _intros
+                    children: intros
                         .map(
                           (e) => Padding(
                             padding: const EdgeInsets.only(right: 8),
                             child: IntroductionIndicator(
-                              _intros.indexOf(e) == currentIndex,
+                              intros.indexOf(e) == currentIndex,
                             ),
                           ),
                         )
@@ -142,7 +181,7 @@ class _IntroductionState extends ConsumerState<Introduction> {
                   ),
                   TextButton(
                     onPressed: () {
-                      if (currentIndex == _intros.length - 1) {
+                      if (currentIndex == intros.length - 1) {
                         SystemChrome.setSystemUIOverlayStyle(
                           const SystemUiOverlayStyle(
                             systemNavigationBarColor: AppColors.pG,
@@ -157,7 +196,7 @@ class _IntroductionState extends ConsumerState<Introduction> {
                       }
                     },
                     child: Text(
-                      'Next',
+                      AppLocale.next.getString(context),
                       style: AppTypography.m3BodylLarge(
                         color: AppColors.text,
                         fontWeight: FontWeight.w600,

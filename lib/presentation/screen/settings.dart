@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pray_quiet/data/app_locale.dart';
 import 'package:pray_quiet/domain/provider/settings.dart';
 import 'package:pray_quiet/presentation/screen/prayer_settings.dart';
+import 'package:pray_quiet/presentation/screen/preference.dart';
 import 'package:pray_quiet/presentation/shared/context_extension.dart';
 
 import 'package:pray_quiet/presentation/style/style.dart';
@@ -23,9 +26,9 @@ class _SettingsState extends State<Settings> {
       slivers: [
         SliverLayoutBuilder(
           builder: (BuildContext context, SliverConstraints constraints) {
-            return const CustomSliverAppBar(
-              title: 'Settings',
-              height: 100,
+            return CustomSliverAppBar(
+              title: AppLocale.settings.getString(context),
+              height: 90.h,
               isHome: false,
             );
           },
@@ -46,7 +49,7 @@ class _SettingsState extends State<Settings> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              'Enable Service',
+                              AppLocale.enableService.getString(context),
                               style: AppTypography.m3BodylLarge(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -79,7 +82,7 @@ class _SettingsState extends State<Settings> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Prayer Time Settings',
+                              AppLocale.prayerSettings.getString(context),
                               style: AppTypography.m3BodylLarge(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -107,7 +110,43 @@ class _SettingsState extends State<Settings> {
                       const AfterPrayerInterval(),
                     ],
                   ),
-                )
+                ),
+                SizedBox(height: 8.h),
+                SettingsItemContainer(
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            AppLocale.preference.getString(context),
+                            style: AppTypography.m3BodylLarge(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          CircleAvatar(
+                            radius: 15.sp,
+                            backgroundColor: AppColors.primary.withOpacity(0.2),
+                            child: IconButton(
+                              padding: EdgeInsets.zero,
+                              icon: const Icon(
+                                Icons.arrow_forward,
+                                color: AppColors.aleGreen,
+                              ),
+                              onPressed: () => context.push(
+                                const Preference(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 2.h),
+                      const SettingsDivider(),
+                      SizedBox(height: 2.h),
+                      //legals
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

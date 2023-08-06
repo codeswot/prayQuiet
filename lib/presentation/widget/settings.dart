@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pray_quiet/data/app_locale.dart';
 import 'package:pray_quiet/domain/provider/settings.dart';
 import 'package:pray_quiet/presentation/shared/context_extension.dart';
 import 'package:pray_quiet/presentation/style/style.dart';
 import 'package:pray_quiet/presentation/widget/dialog.dart';
+import 'package:pray_quiet/presentation/widget/widget.dart';
 
 class SettingsItemContainer extends StatelessWidget {
   const SettingsItemContainer({
@@ -64,7 +67,7 @@ class _AfterPrayerBehaviourState extends State<AfterPrayerBehaviour> {
         Row(
           children: [
             Text(
-              'After prayer behaviour',
+              AppLocale.afterPrayerBehaviour.getString(context),
               style: AppTypography.m3BodylLarge(
                 fontWeight: FontWeight.bold,
               ),
@@ -74,16 +77,16 @@ class _AfterPrayerBehaviourState extends State<AfterPrayerBehaviour> {
               width: 15.w,
               height: 15.h,
               child: IconButton(
-                tooltip: 'After prayer behaviour information',
+                tooltip: AppLocale.afterPrayerBehaviourInfo.getString(context),
                 padding: EdgeInsets.zero,
                 iconSize: 15.sp,
                 splashRadius: 1.sp,
                 onPressed: () {
                   context.showAppDialog(
-                    const AppDialog(
-                      title: 'After prayer behaviour',
+                    AppDialog(
+                      title: AppLocale.afterPrayerBehaviour.getString(context),
                       description:
-                          'This setting deals with the behavior of your device after prayer time. It determines whether it should be set back to ringer mode, vibrate mode, or left on silence. By default, the device is set to ringer mode after prayer time.',
+                          AppLocale.afterPrayerBehaviourDesc.getString(context),
                     ),
                   );
                 },
@@ -128,7 +131,7 @@ class _AfterPrayerBehaviourState extends State<AfterPrayerBehaviour> {
                           ),
                           SizedBox(width: 8.w),
                           Text(
-                            'Put Device on ${item.name}',
+                            '${AppLocale.putDeviceOn.getString(context)} ${item.name}',
                           ),
                           const Spacer(),
                           Radio.adaptive(
@@ -196,7 +199,7 @@ class _AfterPrayerIntervalState extends State<AfterPrayerInterval> {
         Row(
           children: [
             Text(
-              'After prayer Interval',
+              AppLocale.afterPrayerInterval.getString(context),
               style: AppTypography.m3BodylLarge(
                 fontWeight: FontWeight.bold,
               ),
@@ -206,16 +209,17 @@ class _AfterPrayerIntervalState extends State<AfterPrayerInterval> {
               width: 15.w,
               height: 15.h,
               child: IconButton(
-                tooltip: 'After prayer interval information',
+                tooltip: AppLocale.afterPrayerIntervalInfo.getString(context),
                 padding: EdgeInsets.zero,
                 iconSize: 15.sp,
                 splashRadius: 1.sp,
                 onPressed: () {
                   context.showAppDialog(
-                    const AppDialog(
-                      title: 'After prayer interval',
+                    AppDialog(
+                      title:
+                          AppLocale.afterPrayerIntervalInfo.getString(context),
                       description:
-                          'This refers to the interval or waiting period to remove the device from "Do Not Disturb" mode after prayer. By default, the waiting period is set to 30 minutes. During this time, the device will remain in "Do Not Disturb" mode after the prayer event before automatically reverting to its normal mode of operation.',
+                          AppLocale.afterPrayerIntervalDesc.getString(context),
                     ),
                   );
                 },
@@ -289,16 +293,20 @@ class _AfterPrayerIntervalState extends State<AfterPrayerInterval> {
   }
 
   String _buildIntervalText(AfterPrayerIntervalType type) {
+    bool isEnglish = localization.getLanguageName() == 'English';
+    String after = AppLocale.after.getString(context);
+    String min = AppLocale.minute.getString(context);
+    String hour = AppLocale.hour.getString(context);
     switch (type) {
       case AfterPrayerIntervalType.min15:
-        return 'After 15 minutes';
+        return isEnglish ? '$after 15 $min' : '$after $min 15';
       case AfterPrayerIntervalType.min30:
-        return 'After 30 minutes';
+        return isEnglish ? '$after 30 $min' : '$after $min 30';
       case AfterPrayerIntervalType.hr1:
-        return 'After an hour';
+        return '$after $hour';
 
       default:
-        return 'After 15 miniutes';
+        return isEnglish ? '$after 15 $min' : '$after $min 15';
     }
   }
 }
@@ -306,10 +314,9 @@ class _AfterPrayerIntervalState extends State<AfterPrayerInterval> {
 serviceFirstInterceptor(BuildContext context, bool value) async {
   if (!value) {
     await context.showAppDialog(
-      const AppDialog(
-        title: 'Service Disabled',
-        description:
-            'To toggle your prayer silence preference, you need to enable the service first. To do this, simply switch on the "Enable Service" option. This will allow you to customize your device\'s behavior during prayer times, such as setting it to silent mode, vibrate mode, or ringer mode as per your preference. Once the service is enabled, you can configure the settings according to your needs.',
+      AppDialog(
+        title: AppLocale.serviceDisabled.getString(context),
+        description: AppLocale.serviceDisabledDesc.getString(context),
       ),
     );
     return false;

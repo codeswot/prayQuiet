@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:pray_quiet/data/app_locale.dart';
 import 'package:pray_quiet/presentation/screen/screen.dart';
 
 class AppLayout extends StatefulWidget {
@@ -9,6 +11,7 @@ class AppLayout extends StatefulWidget {
 }
 
 class _AppLayoutState extends State<AppLayout> {
+  final FlutterLocalization localization = FlutterLocalization.instance;
   int selectedIndex = 0;
   final PageController _pageController = PageController();
 
@@ -41,10 +44,10 @@ class _AppLayoutState extends State<AppLayout> {
             );
           });
         },
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: const Icon(Icons.home),
+            label: AppLocale.home.getString(context),
           ),
           // NavigationDestination(
           //   icon: Icon(Icons.navigation),
@@ -55,8 +58,8 @@ class _AppLayoutState extends State<AppLayout> {
           //   label: 'Notifications',
           // ),
           NavigationDestination(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
+            icon: const Icon(Icons.settings),
+            label: AppLocale.settings.getString(context),
           ),
         ],
       ),
