@@ -39,13 +39,17 @@ class IntroductionPage extends StatelessWidget {
         const SizedBox(height: 32),
         Text(
           intro.title,
-          style: AppTypography.m3TitlelLarge(),
+          style: AppTypography.m3TitlelLarge(
+            context,
+          ),
           textAlign: TextAlign.center,
         ).animate().fadeIn(),
         const SizedBox(height: 16),
         Text(
           intro.description,
-          style: AppTypography.m3BodylLarge(),
+          style: AppTypography.m3BodylLarge(
+            context,
+          ),
           textAlign: TextAlign.center,
         ),
       ],

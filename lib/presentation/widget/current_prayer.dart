@@ -46,6 +46,8 @@ class CurrentPrayer extends StatelessWidget {
                       Text(
                         nextPrayer.prayerName,
                         style: AppTypography.m3TitlelLarge(
+                          context,
+                          color: Theme.of(context).colorScheme.onPrimary,
                           fontSize: 40.sp,
                         ),
                       ),
@@ -53,7 +55,10 @@ class CurrentPrayer extends StatelessWidget {
                         DateService.getFormartedTime12(
                           nextPrayer.prayerDateTime,
                         ),
-                        style: AppTypography.m3TitlelMedium(),
+                        style: AppTypography.m3TitlelMedium(
+                          context,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
                       ),
                       SizedBox(height: 16.h),
                       Row(
@@ -70,7 +75,10 @@ class CurrentPrayer extends StatelessWidget {
                                 nextPrayer.prayerDateTime.minute,
                               ),
                             ),
-                            style: AppTypography.m3BodylLarge(),
+                            style: AppTypography.m3BodylLarge(
+                              context,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
                           ),
                         ],
                       ),
@@ -101,7 +109,9 @@ class CurrentPrayer extends StatelessWidget {
                             maxLines: 1,
                             textAlign: TextAlign.end,
                             style: AppTypography.m3BodylLarge(
+                              context,
                               fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onPrimary,
                             ),
                           ),
                         ),
@@ -110,7 +120,10 @@ class CurrentPrayer extends StatelessWidget {
                           "${DateService.getFormartedHijriDate(
                             dailyPrayers.first.prayerDateTime,
                           )} AH",
-                          style: AppTypography.m3BodylMedium(),
+                          style: AppTypography.m3BodylMedium(
+                            context,
+                            color: Theme.of(context).colorScheme.onSecondary,
+                          ),
                         )
                       ],
                     );

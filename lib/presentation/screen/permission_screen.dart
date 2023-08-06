@@ -47,14 +47,14 @@ class PermissionScreen extends StatelessWidget {
                 Text(
                   AppLocale.oneMoreThing.getString(context),
                   textAlign: TextAlign.center,
-                  style: AppTypography.m3TitlelMedium(),
+                  style: AppTypography.m3TitlelMedium(context,),
                 ),
                 const SizedBox(height: 16),
                 Text(
                   AppLocale.inOtherTo.getString(context),
                   textAlign: TextAlign.center,
                   style: AppTypography.m3BodylLarge(
-                    color: AppColors.text,
+                  context,
                     fontWeight: FontWeight.w500,
                     fontSize: 10.sp,
                   ),
@@ -71,7 +71,7 @@ class PermissionScreen extends StatelessWidget {
                   child: Text(AppLocale.permissionInfo.getString(context),
                       textAlign: TextAlign.center,
                       style: AppTypography.m3BodylLarge(
-                        color: AppColors.text,
+                      context,
                         fontWeight: FontWeight.w500,
                         fontSize: 10.sp,
                       )),
@@ -175,7 +175,7 @@ class PermissionsListView extends StatelessWidget {
           title: Text(
             'Do not disturb',
             style: AppTypography.m3BodylLarge(
-              color: AppColors.text,
+             context,
               fontWeight: FontWeight.w600,
               fontSize: 10.sp,
             ),
@@ -183,7 +183,7 @@ class PermissionsListView extends StatelessWidget {
           subtitle: Text(
             AppLocale.dndDesc.getString(context),
             style: AppTypography.m3BodylLarge(
-              color: AppColors.text,
+             context,
               fontWeight: FontWeight.w500,
               fontSize: 9.sp,
             ),
@@ -198,7 +198,7 @@ class PermissionsListView extends StatelessWidget {
           title: Text(
             'Location',
             style: AppTypography.m3BodylLarge(
-              color: AppColors.text,
+             context,
               fontWeight: FontWeight.w600,
               fontSize: 10.sp,
             ),
@@ -206,7 +206,7 @@ class PermissionsListView extends StatelessWidget {
           subtitle: Text(
             AppLocale.locDesc.getString(context),
             style: AppTypography.m3BodylLarge(
-              color: AppColors.text,
+             context,
               fontWeight: FontWeight.w500,
               fontSize: 9.sp,
             ),
@@ -221,7 +221,7 @@ class PermissionsListView extends StatelessWidget {
           title: Text(
             'Notifications',
             style: AppTypography.m3BodylLarge(
-              color: AppColors.text,
+             context,
               fontWeight: FontWeight.w600,
               fontSize: 10.sp,
             ),
@@ -229,7 +229,7 @@ class PermissionsListView extends StatelessWidget {
           subtitle: Text(
            AppLocale.notiDesc.getString(context),
             style: AppTypography.m3BodylLarge(
-              color: AppColors.text,
+             context,
               fontWeight: FontWeight.w500,
               fontSize: 9.sp,
             ),

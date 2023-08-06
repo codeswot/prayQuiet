@@ -32,7 +32,9 @@ class _PrayerSettingsState extends ConsumerState<PrayerSettings> {
           children: [
             Text(
               AppLocale.prayerSettings.getString(context),
-              style: AppTypography.m3TitlelLarge(),
+              style: AppTypography.m3TitlelLarge(
+                context,
+              ),
             ),
             SizedBox(width: 4.w),
             Icon(
@@ -61,6 +63,7 @@ class _PrayerSettingsState extends ConsumerState<PrayerSettings> {
                             Text(
                               AppLocale.useCustomPrayer.getString(context),
                               style: AppTypography.m3BodylLarge(
+                                context,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -132,6 +135,7 @@ class _PrayerSettingsState extends ConsumerState<PrayerSettings> {
                                     Text(
                                       prayer.prayerName,
                                       style: AppTypography.m3BodylLarge(
+                                        context,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),

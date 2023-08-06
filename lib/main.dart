@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,8 +13,8 @@ import 'package:pray_quiet/data/app_locale.dart';
 import 'package:pray_quiet/domain/provider/setup.dart';
 import 'package:pray_quiet/domain/service/service.dart';
 import 'package:pray_quiet/presentation/screen/screen.dart';
-import 'package:pray_quiet/presentation/style/colors.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:pray_quiet/presentation/style/style.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -67,56 +68,48 @@ class _PrayQuietAppState extends State<PrayQuietApp> {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return MaterialApp(
-          title: 'PrayQuiet',
-          debugShowCheckedModeBanner: false,
-          supportedLocales: localization.supportedLocales,
-          localizationsDelegates: localization.localizationsDelegates,
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: AppColors.primary,
-            ),
-            useMaterial3: true,
-            textTheme: TextTheme(
-              labelLarge: TextStyle(fontSize: 15.sp),
-              bodyMedium: TextStyle(fontSize: 14.sp),
-            ),
-            fontFamily: 'Nunito',
-          ),
-          home: Material(
-            child: Consumer(
-              builder: (context, ref, _) {
-                SystemChrome.setSystemUIOverlayStyle(
-                  const SystemUiOverlayStyle(
-                    systemNavigationBarColor: AppColors.carmyGreen,
+        return AdaptiveTheme(
+            initial: AdaptiveThemeMode.light,
+            light: lightTheme,
+            dark: darkTheme,
+            builder: (light, dark) {
+              return MaterialApp(
+                title: 'PrayQuiet',
+                debugShowCheckedModeBanner: false,
+                supportedLocales: localization.supportedLocales,
+                localizationsDelegates: localization.localizationsDelegates,
+                theme: light,
+                darkTheme: dark,
+                home: Material(
+                  child: Consumer(
+                    builder: (context, ref, _) {
+                      final setup = ref.watch(setupProvider);
+                      if (setup.isComplete) {
+                        return const AppLayout();
+                      }
+
+                      // if (setup.isInProgress) {
+                      //   SystemChrome.setSystemUIOverlayStyle(
+                      //     const SystemUiOverlayStyle(
+                      //       systemNavigationBarColor: AppColors.introG,
+                      //     ),
+                      //   );
+                      // }
+
+                      return Animate(
+                        effects: const [
+                          FadeEffect(
+                            duration: Duration(milliseconds: 500),
+                            delay: Duration(milliseconds: 90),
+                          )
+                        ],
+                        child: const Introduction(),
+                      );
+                    },
                   ),
-                );
-                final setup = ref.watch(setupProvider);
-                if (setup.isComplete) {
-                  return const AppLayout();
-                }
-
-                if (setup.isInProgress) {
-                  SystemChrome.setSystemUIOverlayStyle(
-                    const SystemUiOverlayStyle(
-                      systemNavigationBarColor: AppColors.introG,
-                    ),
-                  );
-                }
-
-                return Animate(
-                  effects: const [
-                    FadeEffect(
-                      duration: Duration(milliseconds: 500),
-                      delay: Duration(milliseconds: 90),
-                    )
-                  ],
-                  child: const Introduction(),
-                );
-              },
-            ),
-          ),
-        );
+                ),
+              );
+            });
       },
     );
   }

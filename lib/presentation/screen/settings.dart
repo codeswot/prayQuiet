@@ -51,7 +51,9 @@ class _SettingsState extends State<Settings> {
                             Text(
                               AppLocale.enableService.getString(context),
                               style: AppTypography.m3BodylLarge(
+                                context,
                                 fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                             Switch.adaptive(
@@ -84,13 +86,17 @@ class _SettingsState extends State<Settings> {
                             Text(
                               AppLocale.prayerSettings.getString(context),
                               style: AppTypography.m3BodylLarge(
+                                context,
                                 fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                             CircleAvatar(
                               radius: 15.sp,
-                              backgroundColor:
-                                  AppColors.primary.withOpacity(0.2),
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.1),
                               child: IconButton(
                                 padding: EdgeInsets.zero,
                                 icon: const Icon(
@@ -121,12 +127,17 @@ class _SettingsState extends State<Settings> {
                           Text(
                             AppLocale.preference.getString(context),
                             style: AppTypography.m3BodylLarge(
+                              context,
                               fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                           CircleAvatar(
                             radius: 15.sp,
-                            backgroundColor: AppColors.primary.withOpacity(0.2),
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.1),
                             child: IconButton(
                               padding: EdgeInsets.zero,
                               icon: const Icon(
@@ -140,9 +151,25 @@ class _SettingsState extends State<Settings> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 2.h),
+                      SizedBox(height: 4.h),
                       const SettingsDivider(),
-                      SizedBox(height: 2.h),
+                      SizedBox(height: 4.h),
+                      const SettingsItemContainer(
+                        child: Row(
+                          children: [
+                            Text('Privacy & policy'),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 4.h),
+                      const SettingsItemContainer(
+                        child: Row(
+                          children: [
+                            Text('Tearms & conditions'),
+                          ],
+                        ),
+                      ),
+
                       //legals
                     ],
                   ),

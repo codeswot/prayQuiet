@@ -109,6 +109,7 @@ class _IntroductionState extends ConsumerState<Introduction> {
                           child: Text(
                             'English',
                             style: AppTypography.m3BodylLarge(
+                              context,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -118,6 +119,7 @@ class _IntroductionState extends ConsumerState<Introduction> {
                           child: Text(
                             'Hausa',
                             style: AppTypography.m3BodylLarge(
+                              context,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -161,7 +163,7 @@ class _IntroductionState extends ConsumerState<Introduction> {
                     child: Text(
                       AppLocale.previous.getString(context),
                       style: AppTypography.m3BodylLarge(
-                        color: AppColors.text,
+                        context,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -198,7 +200,7 @@ class _IntroductionState extends ConsumerState<Introduction> {
                     child: Text(
                       AppLocale.next.getString(context),
                       style: AppTypography.m3BodylLarge(
-                        color: AppColors.text,
+                        context,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

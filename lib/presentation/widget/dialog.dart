@@ -27,12 +27,14 @@ class AppDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
         child: Material(
           child: Container(
-            color: AppColors.primary,
+            color: Theme.of(context).colorScheme.surface,
             child: Container(
               padding: EdgeInsets.all(25.sp),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                color: AppColors.secondary.withOpacity(0.4),
+                color: AppColors.secondary.withOpacity(
+                  0.2,
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -43,7 +45,7 @@ class AppDialog extends StatelessWidget {
                     radius: 28.sp,
                     child: Icon(
                       Icons.info,
-                      color: AppColors.text,
+                      color: Theme.of(context).colorScheme.onSurface,
                       size: 25.sp,
                     ),
                   ),
@@ -52,7 +54,9 @@ class AppDialog extends StatelessWidget {
                     title,
                     textAlign: TextAlign.center,
                     style: AppTypography.m3TitlelLarge(
+                      context,
                       fontSize: 19.sp,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   SizedBox(height: 5.h),
@@ -60,6 +64,8 @@ class AppDialog extends StatelessWidget {
                     description,
                     textAlign: TextAlign.center,
                     style: AppTypography.m3BodylLarge(
+                      context,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 12.sp,
                     ),
                   ),

@@ -19,15 +19,23 @@ class SettingsItemContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 10.sp,
-        horizontal: 12.sp,
-      ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16.sp),
-        color: AppColors.secondary.withOpacity(0.1),
+        color: Theme.of(context).colorScheme.surface.withOpacity(0.6),
       ),
-      child: child,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          vertical: 10.sp,
+          horizontal: 12.sp,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.sp),
+          color: AppColors.secondary.withOpacity(
+            0.2,
+          ),
+        ),
+        child: child,
+      ),
     );
   }
 }
@@ -40,7 +48,7 @@ class SettingsDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Divider(
-      color: AppColors.text.withOpacity(0.2),
+      color: Theme.of(context).colorScheme.onSurface,
       thickness: 0.3,
     );
   }
@@ -69,7 +77,9 @@ class _AfterPrayerBehaviourState extends State<AfterPrayerBehaviour> {
             Text(
               AppLocale.afterPrayerBehaviour.getString(context),
               style: AppTypography.m3BodylLarge(
+                context,
                 fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             SizedBox(width: 3.w),
@@ -201,7 +211,9 @@ class _AfterPrayerIntervalState extends State<AfterPrayerInterval> {
             Text(
               AppLocale.afterPrayerInterval.getString(context),
               style: AppTypography.m3BodylLarge(
+                context,
                 fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             SizedBox(width: 3.w),

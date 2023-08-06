@@ -16,30 +16,52 @@ class DailyPrayerTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.symmetric(
         horizontal: 16,
         vertical: 8,
       ),
       decoration: BoxDecoration(
         color: isCurrentPrayer
-            ? AppColors.primary
-            : AppColors.secondary.withOpacity(0.1),
+            ? Theme.of(context).colorScheme.primary
+            : Theme.of(context).colorScheme.surface.withOpacity(
+                  0.4,
+                ),
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Row(
-        children: [
-          const Icon(
-            Icons.access_time,
-          ),
-          const SizedBox(width: 16),
-          Text(title, style: AppTypography.m3BodylLarge()),
-          const Spacer(),
-          Text(
-            time ?? '--',
-            style: AppTypography.m3BodylLarge(),
-          ),
-        ],
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: isCurrentPrayer ? null : AppColors.secondary.withOpacity(0.2),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.access_time,
+              color: isCurrentPrayer
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(width: 16),
+            Text(title,
+                style: AppTypography.m3BodylLarge(
+                  context,
+                  color: isCurrentPrayer
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : Theme.of(context).colorScheme.onSurface,
+                )),
+            const Spacer(),
+            Text(
+              time ?? '--',
+              style: AppTypography.m3BodylLarge(
+                context,
+                color: isCurrentPrayer
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

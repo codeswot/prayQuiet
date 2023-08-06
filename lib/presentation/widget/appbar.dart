@@ -3,7 +3,7 @@ import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:pray_quiet/data/app_locale.dart';
+import 'package:pray_quiet/domain/provider/prayer.dart';
 import 'package:pray_quiet/presentation/style/style.dart';
 import 'package:pray_quiet/presentation/widget/widget.dart';
 import 'package:shimmer/shimmer.dart';
@@ -31,20 +31,18 @@ class _CustomSliverAppBarState extends State<CustomSliverAppBar> {
     return Consumer(
       builder: (context, ref, _) {
         return SliverAppBar(
+          backgroundColor: Theme.of(context).colorScheme.secondary,
           actions: [
             IconButton(
               onPressed: () async {
-                // ref.watch(prayerProvider.notifier).updatePrayer();
-                localization.translate(
-                  PrayQuietLocal.en.name,
-                );
+                ref.watch(prayerProvider.notifier).updatePrayer();
               },
               icon: Shimmer.fromColors(
-                baseColor: AppColors.text,
-                highlightColor: AppColors.secondary,
+                baseColor: Theme.of(context).colorScheme.onSecondary,
+                highlightColor: Theme.of(context).colorScheme.secondary,
                 child: Icon(
                   Icons.location_on_outlined,
-                  color: AppColors.text,
+                  color: Theme.of(context).colorScheme.primary,
                   size: 24.sp,
                 ),
               ),
@@ -54,19 +52,26 @@ class _CustomSliverAppBarState extends State<CustomSliverAppBar> {
           pinned: true,
           snap: true,
           stretch: true,
+          collapsedHeight: widget.height,
           title: widget.isHome
               ? const SizedBox()
               : Row(
                   children: [
                     Text(
                       widget.title,
-                      style: AppTypography.m3TitlelLarge(),
+                      style: AppTypography.m3TitlelLarge(
+                        context,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
                     ),
                     SizedBox(width: 4.w),
                     Icon(
                       Icons.settings,
                       size: 15.sp,
-                      color: AppColors.secondary.withOpacity(0.5),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onPrimary
+                          .withOpacity(0.5),
                     ),
                   ],
                 ),
@@ -79,12 +84,12 @@ class _CustomSliverAppBarState extends State<CustomSliverAppBar> {
                         AppAssets.bg,
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        height: 250.h,
+                        height: widget.height * 2,
                       )
                     : const SizedBox(),
                 Container(
-                  height: widget.isHome ? 250.h : 150.h,
-                  color: AppColors.primary.withOpacity(0.4),
+                  height: widget.isHome ? widget.height * 2 : 150.h,
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(
@@ -105,7 +110,12 @@ class _CustomSliverAppBarState extends State<CustomSliverAppBar> {
                                   children: [
                                     Text(
                                       'V ${snapshot.data?.version}(${snapshot.data?.buildNumber})',
-                                      style: AppTypography.m3BodylMedium(),
+                                      style: AppTypography.m3BodylMedium(
+                                        context,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
+                                      ),
                                     ),
                                   ],
                                 );

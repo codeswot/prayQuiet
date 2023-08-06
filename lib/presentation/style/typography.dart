@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pray_quiet/presentation/style/colors.dart';
 
 class AppTypography {
-  static m3TitlelLarge({Color? color, double? fontSize}) {
+  static m3TitlelLarge(BuildContext context, {Color? color, double? fontSize}) {
     return TextStyle(
-      color: color ?? AppColors.text,
+      color: color ?? Theme.of(context).colorScheme.tertiary,
       fontSize: fontSize ?? 25,
       fontWeight: FontWeight.w900,
       fontStyle: FontStyle.normal,
@@ -13,9 +12,10 @@ class AppTypography {
     );
   }
 
-  static m3TitlelMedium({Color? color, double? fontSize}) {
+  static m3TitlelMedium(BuildContext context,
+      {Color? color, double? fontSize}) {
     return TextStyle(
-      color: color ?? AppColors.text,
+      color: color ?? Theme.of(context).colorScheme.tertiary,
       fontSize: fontSize ?? 20,
       fontWeight: FontWeight.bold,
       fontStyle: FontStyle.normal,
@@ -24,13 +24,14 @@ class AppTypography {
     );
   }
 
-  static m3BodylLarge({
+  static m3BodylLarge(
+    BuildContext context, {
     Color? color,
     double? fontSize,
     FontWeight? fontWeight,
   }) {
     return TextStyle(
-      color: color ?? AppColors.text,
+      color: color ?? Theme.of(context).colorScheme.tertiary,
       fontSize: fontSize ?? 15,
       fontWeight: fontWeight ?? FontWeight.w500,
       fontStyle: FontStyle.normal,
@@ -39,9 +40,9 @@ class AppTypography {
     );
   }
 
-  static m3BodylMedium({Color? color, double? fontSize}) {
+  static m3BodylMedium(BuildContext context, {Color? color, double? fontSize}) {
     return TextStyle(
-      color: color ?? AppColors.text,
+      color: color ?? Theme.of(context).colorScheme.tertiary,
       fontSize: fontSize ?? 13,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,

@@ -10,6 +10,7 @@ mixin AppLocale {
   static const preference = 'Preferences';
   static const now = 'Now';
   static const language = 'Change language';
+  static const theme = 'Change theme';
   static const enableService = 'Enable service';
   static const afterPrayerBehaviour = 'After prayer behaviour';
   static const afterPrayerBehaviourInfo = 'After prayer behaviour information';
@@ -18,6 +19,10 @@ mixin AppLocale {
   static const after = 'After';
   static const hour = 'an hour';
   static const minute = 'minute';
+
+  static const light = 'Light theme';
+  static const dark = 'Dark theme';
+  static const system = 'System default theme';
 
   static const edit = 'Edit';
   static const next = 'Next';
@@ -78,6 +83,7 @@ mixin AppLocale {
     settings: settings,
     preference: preference,
     language: language,
+    theme: theme,
     edit: edit,
     next: next,
     grantAccess: grantAccess,
@@ -115,6 +121,9 @@ mixin AppLocale {
     dndDesc: dndDesc,
     locDesc: locDesc,
     notiDesc: notiDesc,
+    light: light,
+    dark: dark,
+    system: system,
   };
 
   static const Map<String, dynamic> HA = {
@@ -171,10 +180,14 @@ mixin AppLocale {
     dndDesc: 'Don sanya wayarka ta kunna shiru yayin lokutan sallah',
     locDesc: 'Don samun lokutan sallah wurin da kuke / yankin ku',
     notiDesc: 'Don sanar da kai duk san da lokacin yin sallah yayi',
+    theme: 'Canza jigo',
+    light: 'Jigo mai haske',
+    dark: 'Jigo mai duhu',
+    system: 'Jigon tsarin wayar',
   };
 }
 
-enum PrayQuietLocal {
+enum PrayQuietLocaleType {
   en,
   ha,
 }

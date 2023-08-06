@@ -17,7 +17,7 @@ class Home extends StatelessWidget {
             builder: (BuildContext context, SliverConstraints constraints) {
               return const CustomSliverAppBar(
                 title: 'Home',
-                height: 250,
+                height: 230,
               );
             },
           ),
