@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pray_quiet/data/app_locale.dart';
 
 import 'package:pray_quiet/domain/provider/setup.dart';
 import 'package:pray_quiet/domain/service/service.dart';
@@ -43,13 +45,13 @@ class PermissionScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'one more thing... ',
+                  AppLocale.oneMoreThing.getString(context),
                   textAlign: TextAlign.center,
                   style: AppTypography.m3TitlelMedium(),
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'in order to do a great job, Pray Quiet needs you to grant  permission to these things, ',
+                  AppLocale.inOtherTo.getString(context),
                   textAlign: TextAlign.center,
                   style: AppTypography.m3BodylLarge(
                     color: AppColors.text,
@@ -66,8 +68,7 @@ class PermissionScreen extends StatelessWidget {
                     color: AppColors.secondary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text(
-                      'When you tap the "Grant Access" button, the app will open the "Do Not Disturb" settings page. It guides you to find and activate the "Pray Quiet" option, allowing the app to use the "Do Not Disturb" feature during prayer times according to your preferences. This helps you stay undisturbed and focused during your moments of prayer or quiet reflection." ',
+                  child: Text(AppLocale.permissionInfo.getString(context),
                       textAlign: TextAlign.center,
                       style: AppTypography.m3BodylLarge(
                         color: AppColors.text,
@@ -94,9 +95,11 @@ class PermissionScreen extends StatelessWidget {
                                   if (!isavailable) {
                                     return context.showAppDialog(
                                       AppDialog(
-                                        title: 'Setup Failed',
-                                        description:
-                                            'Seems your location is turned off, please enable location and make sure you have internet connection, then try again !',
+                                        title: AppLocale.setupFailed
+                                            .getString(context),
+                                        description: AppLocale
+                                            .serviceDisabledDesc
+                                            .getString(context),
                                         onTap: () async {
                                           await LocationService
                                               .openLocationSettings();
@@ -117,15 +120,15 @@ class PermissionScreen extends StatelessWidget {
                                 }
                               },
                         child: isLoading
-                            ? const SizedBox(
+                            ? SizedBox(
                                 height: 16,
                                 width: 16,
                                 child: CircularProgressIndicator(
-                                  color: AppColors.text,
+                                  color: AppColors.text.withOpacity(0.6),
                                   strokeWidth: 8,
                                 ),
                               )
-                            : const Text('Grant Access'),
+                            : Text(AppLocale.grantAccess.getString(context)),
                       ),
                       const SizedBox(height: 16),
                       TextButton(
@@ -139,7 +142,7 @@ class PermissionScreen extends StatelessWidget {
                                 );
                                 context.pop();
                               },
-                        child: const Text('Not now'),
+                        child: Text(AppLocale.notNow.getString(context)),
                       ),
                     ],
                   );
@@ -178,7 +181,7 @@ class PermissionsListView extends StatelessWidget {
             ),
           ),
           subtitle: Text(
-            'To automatically put your phone on silent during prayer times',
+            AppLocale.dndDesc.getString(context),
             style: AppTypography.m3BodylLarge(
               color: AppColors.text,
               fontWeight: FontWeight.w500,
@@ -201,7 +204,7 @@ class PermissionsListView extends StatelessWidget {
             ),
           ),
           subtitle: Text(
-            'To get prayer times for your location',
+            AppLocale.locDesc.getString(context),
             style: AppTypography.m3BodylLarge(
               color: AppColors.text,
               fontWeight: FontWeight.w500,
@@ -224,7 +227,7 @@ class PermissionsListView extends StatelessWidget {
             ),
           ),
           subtitle: Text(
-            'To notify you when it\'s time to pray',
+           AppLocale.notiDesc.getString(context),
             style: AppTypography.m3BodylLarge(
               color: AppColors.text,
               fontWeight: FontWeight.w500,

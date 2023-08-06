@@ -1,24 +1,24 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'prayer.dart';
+part of 'localization.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$prayerHash() => r'0f9a7599a9744b3c1044a9ff3840fefb06f8a665';
+String _$localizationHash() => r'00408436f67a66b546c0e009197d29b53807d394';
 
-/// See also [Prayer].
-@ProviderFor(Prayer)
-final prayerProvider = NotifierProvider<Prayer, List<PrayerInfo>>.internal(
-  Prayer.new,
-  name: r'prayerProvider',
+/// See also [Localization].
+@ProviderFor(Localization)
+final localizationProvider = NotifierProvider<Localization, Locale>.internal(
+  Localization.new,
+  name: r'localizationProvider',
   debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$prayerHash,
+      const bool.fromEnvironment('dart.vm.product') ? null : _$localizationHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$Prayer = Notifier<List<PrayerInfo>>;
+typedef _$Localization = Notifier<Locale>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member

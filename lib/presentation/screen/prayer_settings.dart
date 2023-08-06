@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pray_quiet/data/app_locale.dart';
 import 'package:pray_quiet/data/prayer_info_model.dart';
 import 'package:pray_quiet/domain/provider/prayer.dart';
 import 'package:pray_quiet/domain/provider/settings.dart';
@@ -29,7 +31,7 @@ class _PrayerSettingsState extends ConsumerState<PrayerSettings> {
         title: Row(
           children: [
             Text(
-              'Prayer Settings',
+              AppLocale.prayerSettings.getString(context),
               style: AppTypography.m3TitlelLarge(),
             ),
             SizedBox(width: 4.w),
@@ -57,7 +59,7 @@ class _PrayerSettingsState extends ConsumerState<PrayerSettings> {
                         Row(
                           children: [
                             Text(
-                              'Use custom prayer time',
+                              AppLocale.useCustomPrayer.getString(context),
                               style: AppTypography.m3BodylLarge(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -66,16 +68,18 @@ class _PrayerSettingsState extends ConsumerState<PrayerSettings> {
                               width: 15.w,
                               height: 15.h,
                               child: IconButton(
-                                tooltip: 'use custom prayer time',
+                                tooltip: AppLocale.useCustomPrayer
+                                    .getString(context),
                                 padding: EdgeInsets.zero,
                                 iconSize: 15.sp,
                                 splashRadius: 1.sp,
                                 onPressed: () {
                                   context.showAppDialog(
-                                    const AppDialog(
-                                      title: 'Custom prayer time',
-                                      description:
-                                          'By enabling this option, you can input the specific prayer times observed at your masjid, allowing the app to align with your local community\'s prayer schedule. By toggling this option, you ensure that the app accurately reflects the prayer times practiced at your masjid, enhancing your prayer experience and spiritual connection.',
+                                    AppDialog(
+                                      title: AppLocale.customPrayer
+                                          .getString(context),
+                                      description: AppLocale.customPrayerDesc
+                                          .getString(context),
                                     ),
                                   );
                                 },
@@ -163,9 +167,9 @@ class _PrayerSettingsState extends ConsumerState<PrayerSettings> {
 
                                         //
                                       },
-                                      child: const Text(
-                                        'Edit',
-                                        style: TextStyle(
+                                      child: Text(
+                                        AppLocale.edit.getString(context),
+                                        style: const TextStyle(
                                           decoration: TextDecoration.underline,
                                           decorationColor: AppColors.aleGreen,
                                         ),

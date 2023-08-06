@@ -1,12 +1,22 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:pray_quiet/domain/service/localization.dart';
+import 'package:pray_quiet/domain/service/service.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+part 'localization.g.dart';
 
-final localeProvider = Provider<Locale>((ref) {
-  return const Locale('en');
-});
+@Riverpod(keepAlive: true)
+class Localization extends _$Localization {
+  final LoggingService _logger = LoggingService();
+  @override
+  Locale build() {
+    try {
+      _logger.info("Localization provider building.");
+      // AsyncValue<SharedPreferences> pref =
+      //     ref.watch(getSharedPreferencesProvider);
 
-final appLocalizationsProvider = Provider<AppLocalizations>((ref) {
-  final locale = ref.watch(localeProvider);
-  return AppLocalizations(locale);
-});
+      return const Locale('en');
+    } catch (e) {
+      _logger.error('Error occured building Localization $e');
+      return const Locale('en');
+    }
+  }
+}

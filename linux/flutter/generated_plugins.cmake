@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   do_not_disturb
+  flutter_localization
   flutter_volume_controller
   url_launcher_linux
 )
